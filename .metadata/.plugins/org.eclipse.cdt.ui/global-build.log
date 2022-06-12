@@ -1,38 +1,42 @@
-14:51:43 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+17:02:58 **** Incremental Build of configuration Debug for project 2022_06_12_ic2 ****
 make -j8 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c: In function '__io_putchar':
-../Core/Src/main.c:69:29: warning: passing argument 2 of 'HAL_UART_Transmit' from incompatible pointer type [-Wincompatible-pointer-types]
-   69 |  HAL_UART_Transmit(&huart3, &ch, 1, 100);
-      |                             ^~~
-      |                             |
-      |                             int *
-In file included from ../Core/Inc/stm32f4xx_hal_conf.h:407,
-                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
-                 from ../Core/Inc/main.h:30,
-                 from ../Core/Src/main.c:20:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:722:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'int *'
-  722 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
-      |                                                                ~~~~~~~~~~~~~~~^~~~~
-../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
-../Core/Src/main.c:199:17: warning: 'last_time' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  199 |   time_interval = current_time - last_time;
-      |   ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-arm-none-eabi-gcc -o "22_06_10_Userbutton.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="22_06_10_Userbutton.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: 22_06_10_Userbutton.elf
+arm-none-eabi-gcc -o "2022_06_12_ic2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\workspace_stm32\STM32CubeIDE_3\2022_06_12_ic2\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="2022_06_12_ic2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 2022_06_12_ic2.elf
  
-arm-none-eabi-size   22_06_10_Userbutton.elf 
-arm-none-eabi-objdump -h -S  22_06_10_Userbutton.elf  > "22_06_10_Userbutton.list"
+arm-none-eabi-size   2022_06_12_ic2.elf 
+arm-none-eabi-objdump -h -S  2022_06_12_ic2.elf  > "2022_06_12_ic2.list"
    text	   data	    bss	    dec	    hex	filename
-  17780	    120	   1712	  19612	   4c9c	22_06_10_Userbutton.elf
+  17088	    120	   1776	  18984	   4a28	2022_06_12_ic2.elf
 Finished building: default.size.stdout
  
-Finished building: 22_06_10_Userbutton.list
+Finished building: 2022_06_12_ic2.list
  
-14:51:58 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+17:03:53 **** Incremental Build of configuration Debug for project 2022_06_12_ic2 ****
 make -j8 all 
-arm-none-eabi-size   22_06_10_Userbutton.elf 
+arm-none-eabi-size   2022_06_12_ic2.elf 
    text	   data	    bss	    dec	    hex	filename
-  17780	    120	   1712	  19612	   4c9c	22_06_10_Userbutton.elf
+  17088	    120	   1776	  18984	   4a28	2022_06_12_ic2.elf
+Finished building: default.size.stdout
+ 
+17:23:03 **** Incremental Build of configuration Debug for project 2022_06_12_ic2 ****
+make -j8 all 
+arm-none-eabi-size   2022_06_12_ic2.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17088	    120	   1776	  18984	   4a28	2022_06_12_ic2.elf
+Finished building: default.size.stdout
+ 
+17:35:14 **** Incremental Build of configuration Debug for project 2022_06_12_ic2 ****
+make -j8 all 
+arm-none-eabi-size   2022_06_12_ic2.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17088	    120	   1776	  18984	   4a28	2022_06_12_ic2.elf
+Finished building: default.size.stdout
+ 
+17:44:33 **** Incremental Build of configuration Debug for project 2022_06_12_ic2 ****
+make -j8 all 
+arm-none-eabi-size   2022_06_12_ic2.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17088	    120	   1776	  18984	   4a28	2022_06_12_ic2.elf
 Finished building: default.size.stdout
  

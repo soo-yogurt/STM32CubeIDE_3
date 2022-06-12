@@ -1,0 +1,10 @@
+17:44:33 **** Incremental Build of configuration Debug for project 2022_06_12_ic2 ****
+make -j8 all 
+arm-none-eabi-size   2022_06_12_ic2.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17088	    120	   1776	  18984	   4a28	2022_06_12_ic2.elf
+Finished building: default.size.stdout
+ 
+
+17:44:34 Build Finished. 0 errors, 0 warnings. (took 544ms)
+
