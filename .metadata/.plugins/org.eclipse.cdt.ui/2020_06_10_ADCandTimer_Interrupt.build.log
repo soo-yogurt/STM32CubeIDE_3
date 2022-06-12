@@ -1,0 +1,30 @@
+14:17:37 **** Incremental Build of configuration Debug for project 2020_06_10_ADCandTimer_Interrupt ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function '__io_putchar':
+../Core/Src/main.c:74:29: warning: passing argument 2 of 'HAL_UART_Transmit' from incompatible pointer type [-Wincompatible-pointer-types]
+   74 |  HAL_UART_Transmit(&huart3, &ch, 1, 100);
+      |                             ^~~
+      |                             |
+      |                             int *
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:407,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:722:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'int *'
+  722 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "2020_06_10_ADCandTimer_Interrupt.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\workspace_stm32\STM32CubeIDE_3\2020_06_10_ADCandTimer_Interrupt\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="2020_06_10_ADCandTimer_Interrupt.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 2020_06_10_ADCandTimer_Interrupt.elf
+ 
+arm-none-eabi-size   2020_06_10_ADCandTimer_Interrupt.elf 
+arm-none-eabi-objdump -h -S  2020_06_10_ADCandTimer_Interrupt.elf  > "2020_06_10_ADCandTimer_Interrupt.list"
+   text	   data	    bss	    dec	    hex	filename
+  22112	    120	   1840	  24072	   5e08	2020_06_10_ADCandTimer_Interrupt.elf
+Finished building: default.size.stdout
+ 
+Finished building: 2020_06_10_ADCandTimer_Interrupt.list
+ 
+
+14:17:38 Build Finished. 0 errors, 1 warnings. (took 1s.509ms)
+
