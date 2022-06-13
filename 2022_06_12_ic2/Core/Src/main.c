@@ -61,7 +61,7 @@ static void MX_NVIC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void I2C_Scan();
 /* USER CODE END 0 */
 
 /**
@@ -102,16 +102,8 @@ int main(void)
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
   HAL_StatusTypeDef res;
-  for(uint16_t i = 0; i < 128; i++) {
-      res = HAL_I2C_IsDeviceReady(&hi2c1, i << 1, 1, 10);
-      if(res == HAL_OK) {
-          char msg[64];
-          snprintf(msg, sizeof(msg), "0x%02X", i);
-          HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
-      } else {
-          HAL_UART_Transmit(&huart3, (uint8_t*)".", 1, HAL_MAX_DELAY);
-      }
-  }
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -121,6 +113,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	   I2C_Scan();
+	   HAL_Delay(5000);
   }
   /* USER CODE END 3 */
 }
@@ -191,7 +185,23 @@ static void MX_NVIC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void I2C_Scan(){
+	  char info[] = "Scanning I2C bus...\r\n";
+	  HAL_UART_Transmit(&huart3, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
 
+	  HAL_StatusTypeDef res;
+for(uint16_t i = 0; i < 128; i++) {
+    res = HAL_I2C_IsDeviceReady(&hi2c1, i << 1, 1, 10);
+    if(res == HAL_OK) {
+        char msg[64];
+        snprintf(msg, sizeof(msg), "0x%02X", i);
+        HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+    } else {
+        HAL_UART_Transmit(&huart3, (uint8_t*)".", 1, HAL_MAX_DELAY);
+    }
+}
+HAL_UART_Transmit(&huart3, (uint8_t*)"\r\n", 2, HAL_MAX_DELAY);
+}
 /* USER CODE END 4 */
 
 /**
