@@ -1,0 +1,10 @@
+11:17:26 **** Incremental Build of configuration Debug for project 20220614_workspace_ADC ****
+make -j8 all 
+arm-none-eabi-size   20220614_workspace_ADC.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15472	    120	   1760	  17352	   43c8	20220614_workspace_ADC.elf
+Finished building: default.size.stdout
+ 
+
+11:17:27 Build Finished. 0 errors, 0 warnings. (took 539ms)
+
