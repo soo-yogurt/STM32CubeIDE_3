@@ -1303,3 +1303,15 @@ Project's '20220614_workspace_ADC' active one is '20220614_workspace_ADC.ioc' fi
 !MESSAGE Invalid Input: Must be project's active .ioc file.
 
 Project's '20220614_workspace_ADC' active one is '20220614_workspace_ADC.ioc' file
+
+!ENTRY com.st.stm32cube.common.projectcreation 4 0 2022-06-14 13:50:01.096
+!MESSAGE Project is null
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-06-14 13:56:05.804
+!MESSAGE Indexed '2020_06_14_i2c_workspace2' (26 sources, 89 headers) in 2.02 sec: 6,627 declarations; 34,559 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0049%)
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.launch 2 0 2022-06-14 14:28:50.797
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.launch 2 0 2022-06-14 14:31:52.548
+!MESSAGE Won't launch debug session since we failed to locate the binary.
