@@ -20,7 +20,6 @@
 #include "main.h"
 #include "i2c.h"
 #include "rtc.h"
-#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -106,13 +105,22 @@ int main(void)
   MX_I2C1_Init();
   MX_RTC_Init();
   MX_USART2_UART_Init();
-  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 /*  LCD_Init(LCD_ADDR);*/
   I2C_Scan();
   LCD_Init(LCD_ADDR);
   /* USER CODE END 2 */
 
+
+    // set address to 0x00
+/*    LCD_SendCommand(LCD_ADDR, 0b10000000);
+    LCD_SendString(LCD_ADDR, " Using 1602 LCD");*/
+
+    // set address to 0x40
+/*    LCD_SendCommand(LCD_ADDR, 0b11000000);
+    LCD_SendString(LCD_ADDR, "  over I2C bus");*/
+  LCD_SendCommand(LCD_ADDR, 0b00100000);
+  LCD_SendString(LCD_ADDR, "A");
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
