@@ -82,6 +82,8 @@ HAL_StatusTypeDef LCD_SendInternal(uint8_t lcd_addr, uint8_t data, uint8_t flags
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  char temp[100];
+  char ampm[2][3] = {"AM", "PM"};
 
   /* USER CODE END 1 */
 
@@ -111,6 +113,12 @@ int main(void)
 /*  LCD_Init(LCD_ADDR);*/
   I2C_Scan();
   LCD_Init(LCD_ADDR);
+
+
+
+  RTC_TimeTypeDef sTime = {0};
+  RTC_DateTypeDef sDate = {0};
+  HAL_UART_Transmit(&huart2, temp, strlen(temp), 10);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -120,7 +128,23 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	    loop();
+/*	    LCD_SendCommand(LCD_ADDR, 0b10000000);
+	    LCD_SendString(LCD_ADDR, "  over I2C bus");
+	    LCD_SendCommand(LCD_ADDR, 0b11000000);
+	    LCD_SendString(LCD_ADDR, "  over I2C bus");
+	    loop();*/
+
+
+
+	  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+	  sprintf(temp,"\r\n20%02d-%02d-%02d %s %02d:%02d:%02d", sDate.Year, sDate.Month,
+	         sDate.Date, ampm[sTime.TimeFormat >> 6], sTime.Hours, sTime.Minutes,
+	         sTime.Seconds);
+
+	  HAL_UART_Transmit(&huart2, (uint8_t*)temp, strlen(temp), 1000);
+
   }
   /* USER CODE END 3 */
 }
@@ -180,6 +204,8 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+
 void I2C_Scan() {
     char info[] = "Scanning I2C bus...\r\n";
     HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
