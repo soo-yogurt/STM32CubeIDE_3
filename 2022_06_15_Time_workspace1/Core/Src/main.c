@@ -19,7 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "rtc.h"
-#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -92,13 +91,18 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_RTC_Init();
-  MX_TIM3_Init();
   MX_USART3_UART_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN); // 시간 정보 얻어오기
-  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN); // 날짜 정보 얻어오기
 
+  sTime.Hours = 11;
+  sTime.Minutes = 18;
+  sTime.Seconds = 30;
+  sDate.Date = 20;
+
+
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
   /* USER CODE END 2 */
 
@@ -106,6 +110,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN); // 날짜 정보 얻어오기
+	  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN); // 시간 정보 얻어오기
 	  sprintf(temp,"\r\n20%02d-%02d-%02d %s %02d:%02d:%02d", sDate.Year, sDate.Month,
 	         sDate.Date, ampm[sTime.TimeFormat], sTime.Hours, sTime.Minutes,
 	         sTime.Seconds);

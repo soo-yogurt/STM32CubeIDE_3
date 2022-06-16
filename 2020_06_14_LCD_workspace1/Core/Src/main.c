@@ -38,7 +38,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define LCD_ADDR (0x27 << 1)
-
 #define PIN_RS    (1 << 0)
 #define PIN_EN    (1 << 2)
 #define BACKLIGHT (1 << 3)
@@ -54,7 +53,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+  RTC_TimeTypeDef sTime = {0};
+  RTC_DateTypeDef sDate = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,9 +116,8 @@ int main(void)
 
 
 
-  RTC_TimeTypeDef sTime = {0};
-  RTC_DateTypeDef sDate = {0};
-  HAL_UART_Transmit(&huart2, temp, strlen(temp), 10);
+
+/*  HAL_UART_Transmit(&huart2, (uint8_t*)temp, strlen(temp), 10);*/
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -128,16 +127,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-/*	    LCD_SendCommand(LCD_ADDR, 0b10000000);
-	    LCD_SendString(LCD_ADDR, "  over I2C bus");
-	    LCD_SendCommand(LCD_ADDR, 0b11000000);
-	    LCD_SendString(LCD_ADDR, "  over I2C bus");
-	    loop();*/
 
 
 
-	  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
 
 	  sprintf(temp,"\r\n20%02d-%02d-%02d %s %02d:%02d:%02d", sDate.Year, sDate.Month,
 	         sDate.Date, ampm[sTime.TimeFormat >> 6], sTime.Hours, sTime.Minutes,

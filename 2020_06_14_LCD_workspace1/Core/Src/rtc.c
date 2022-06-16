@@ -61,7 +61,7 @@ void MX_RTC_Init(void)
 
   /** Initialize RTC and set the Time and Date
   */
-  sTime.Hours = 1;
+  sTime.Hours = 12;
   sTime.Minutes = 0;
   sTime.Seconds = 0;
   sTime.TimeFormat = RTC_HOURFORMAT12_AM;
