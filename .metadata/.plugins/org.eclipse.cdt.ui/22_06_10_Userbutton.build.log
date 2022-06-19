@@ -1,53 +1,10 @@
-15:14:17 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+17:43:36 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
 make -j8 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c: In function '__io_putchar':
-../Core/Src/main.c:112:29: warning: passing argument 2 of 'HAL_UART_Transmit' from incompatible pointer type [-Wincompatible-pointer-types]
-  112 |  HAL_UART_Transmit(&huart3, &ch, 1, 100);
-      |                             ^~~
-      |                             |
-      |                             int *
-In file included from ../Core/Inc/stm32f4xx_hal_conf.h:407,
-                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
-                 from ../Core/Inc/main.h:30,
-                 from ../Core/Src/main.c:20:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:722:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'int *'
-  722 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
-      |                                                                ~~~~~~~~~~~~~~~^~~~~
-../Core/Src/main.c: In function 'main':
-../Core/Src/main.c:184:49: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
-  184 |      HAL_UART_Transmit(&huart3, (uint8_t*)temp, strlen(temp), 1000);
-      |                                                 ^~~~~~
-../Core/Src/main.c:184:49: warning: incompatible implicit declaration of built-in function 'strlen'
-../Core/Src/main.c:30:1: note: include '<string.h>' or provide a declaration of 'strlen'
-   29 | #include "stdio.h"
-  +++ |+#include <string.h>
-   30 | #include "stdint.h"
-../Core/Src/main.c: In function 'I2C_Scan':
-../Core/Src/main.c:347:24: error: 'huart2' undeclared (first use in this function); did you mean 'huart3'?
-  347 |     HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
-      |                        ^~~~~~
-      |                        huart3
-../Core/Src/main.c:347:24: note: each undeclared identifier is reported only once for each function it appears in
-../Core/Src/main.c:347:48: warning: incompatible implicit declaration of built-in function 'strlen'
-  347 |     HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
-      |                                                ^~~~~~
-../Core/Src/main.c:347:48: note: include '<string.h>' or provide a declaration of 'strlen'
-../Core/Src/main.c:351:15: warning: implicit declaration of function 'HAL_I2C_IsDeviceReady' [-Wimplicit-function-declaration]
-  351 |         res = HAL_I2C_IsDeviceReady(&hi2c1, i << 1, 1, 10);
-      |               ^~~~~~~~~~~~~~~~~~~~~
-../Core/Src/main.c:351:38: error: 'hi2c1' undeclared (first use in this function)
-  351 |         res = HAL_I2C_IsDeviceReady(&hi2c1, i << 1, 1, 10);
-      |                                      ^~~~~
-../Core/Src/main.c: In function 'LCD_SendInternal':
-../Core/Src/main.c:369:38: error: 'hi2c1' undeclared (first use in this function)
-  369 |         res = HAL_I2C_IsDeviceReady(&hi2c1, lcd_addr, 1, HAL_MAX_DELAY);
-      |                                      ^~~~~
-../Core/Src/main.c:383:11: warning: implicit declaration of function 'HAL_I2C_Master_Transmit' [-Wimplicit-function-declaration]
-  383 |     res = HAL_I2C_Master_Transmit(&hi2c1, lcd_addr, data_arr, sizeof(data_arr), HAL_MAX_DELAY);
-      |           ^~~~~~~~~~~~~~~~~~~~~~~
-make: *** [Core/Src/subdir.mk:52: Core/Src/main.o] Error 1
-"make -j8 all" terminated with exit code 2. Build might be incomplete.
+arm-none-eabi-size   22_06_10_Userbutton.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28868	    120	   2056	  31044	   7944	22_06_10_Userbutton.elf
+Finished building: default.size.stdout
+ 
 
-15:14:18 Build Failed. 4 errors, 6 warnings. (took 828ms)
+17:43:36 Build Finished. 0 errors, 0 warnings. (took 625ms)
 

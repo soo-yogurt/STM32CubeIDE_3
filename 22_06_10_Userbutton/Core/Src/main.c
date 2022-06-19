@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "i2c.h"
 #include "rtc.h"
 #include "tim.h"
 #include "usart.h"
@@ -122,7 +123,8 @@ int __io_putchar(int ch) {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	char temp[100];
+	char temp[20];
+	char buf[20];
 	char ampm[2][3] = {"AM", "PM"};
 
   /* USER CODE END 1 */
@@ -149,22 +151,28 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM3_Init();
   MX_ADC1_Init();
+  MX_USART2_UART_Init();
+  MX_I2C1_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  init();
-	HAL_TIM_Base_Init(&htim3);
-	HAL_TIM_Base_Start_IT(&htim3);
+/*  init();*/
+  HAL_TIM_Base_Init(&htim3);
+  HAL_TIM_Base_Start_IT(&htim3);
 
 
-	sTime.Hours = 12;
-	sTime.Minutes = 00;
-	sTime.Seconds = 00;
-	sTime.TimeFormat = 0x00U;
+  sTime.Hours = 12;
+  sTime.Minutes = 00;
+  sTime.Seconds = 00;
+  sTime.TimeFormat = 0x00U;
 
-	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  sDate.Year = 22;
+  sDate.Month = 6;
+  sDate.Date = 20;
+
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -174,20 +182,39 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		//시계
-		if(flag == 0)
+		if (flag == 0)
 		{
+			HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN); // 시간 정보 얻어오기
+			HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN); // 날짜 정보 얻어오기
 			//printf("flag0에 들어왔습니다.");
-			  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN); // 날짜 정보 얻어오기
-			  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN); // 시간 정보 얻어오기
-			  sprintf(temp,"\r\n20%02d-%02d-%02d %s %02d:%02d:%02d", sDate.Year, sDate.Month,
+
+/*			  sprintf(temp,"\r\n20%02d-%02d-%02d %s %02d:%02d:%02d", sDate.Year, sDate.Month,
 			 	         sDate.Date, ampm[sTime.TimeFormat], sTime.Hours, sTime.Minutes,
-			 	         sTime.Seconds);
-			  HAL_UART_Transmit(&huart3, (uint8_t*)temp, strlen(temp), 1000);
+			 	         sTime.Seconds);*/
+
+			  //LCD Clock
+
+/*			  // set address to 0x00
+			  LCD_SendCommand(LCD_ADDR, 0b10000000);
+			  LCD_SendString(LCD_ADDR, " Using 1602 LCD");
+
+			  // set address to 0x40
+			  LCD_SendCommand(LCD_ADDR, 0b11000000);
+			   LCD_SendString(LCD_ADDR, "  over I2C bus");*/
+			  sprintf(buf, "%s  %02d:%02d:%02d   ", ampm[sTime.TimeFormat], sTime.Hours, sTime.Minutes, sTime.Seconds);
+//			  HAL_UART_Transmit(&huart3, buf, sizeof(buf), 1000);
+			  LCD_SendCommand(LCD_ADDR, 0b10000000);
+			  LCD_SendString(LCD_ADDR, " @   LCD Clock  ");
+			  LCD_SendCommand(LCD_ADDR, 0b11000000);
+			  LCD_SendString(LCD_ADDR, buf);
+			  printf("buf : %s\r\n", buf);
 		}
+
 		//시간 수정
 		else if(flag == 1)
 		{
-			//printf("flag1에 들어왔습니다.");
+
+ 			//printf("flag1에 들어왔습니다.");
 			if (ADC_value <= UP_KEY_MAX) {
 				//printf("UP\r\n");
 			}
@@ -206,6 +233,7 @@ int main(void)
 		{
 			//printf("flag2에 들어왔습니다.");
 		}
+
 
 	}
   /* USER CODE END 3 */
@@ -416,13 +444,13 @@ void init() {
     I2C_Scan();
     LCD_Init(LCD_ADDR);
 
-    // set address to 0x00
+/*    // set address to 0x00
     LCD_SendCommand(LCD_ADDR, 0b10000000);
     LCD_SendString(LCD_ADDR, " Using 1602 LCD");
 
     // set address to 0x40
     LCD_SendCommand(LCD_ADDR, 0b11000000);
-    LCD_SendString(LCD_ADDR, "  over I2C bus");
+    LCD_SendString(LCD_ADDR, "  over I2C bus");*/
 }
 
 void loop() {
