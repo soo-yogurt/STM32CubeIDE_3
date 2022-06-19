@@ -1,0 +1,10 @@
+17:01:01 **** Incremental Build of configuration Debug for project EXTIBUTTON ****
+make -j8 all 
+arm-none-eabi-size   EXTIBUTTON.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15180	    120	   1728	  17028	   4284	EXTIBUTTON.elf
+Finished building: default.size.stdout
+ 
+
+17:01:01 Build Finished. 0 errors, 0 warnings. (took 544ms)
+

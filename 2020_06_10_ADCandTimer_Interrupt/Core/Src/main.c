@@ -75,8 +75,6 @@ int __io_putchar(int ch){
 
 	return ch;
 }
-
-
 /* USER CODE END 0 */
 
 /**

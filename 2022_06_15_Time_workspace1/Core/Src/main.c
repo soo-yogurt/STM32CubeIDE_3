@@ -60,6 +60,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 RTC_TimeTypeDef sTime = {0};
 RTC_DateTypeDef sDate = {0};
+int uart_buf;
 /* USER CODE END 0 */
 
 /**
@@ -71,6 +72,9 @@ int main(void)
   /* USER CODE BEGIN 1 */
   char temp[100];
   char ampm[2][3] = {"AM", "PM"};
+
+  uint32_t *flash_addr;
+
 
   /* USER CODE END 1 */
 
@@ -102,10 +106,18 @@ int main(void)
   sTime.Seconds = 30;
   sDate.Date = 20;
 
-
+/*
   HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);*/
 
+  flash_addr = (uint32_t *) 0x080000000;
+
+  for(int i = 0; i< 10 ; i++){
+	  memset(uart_buf, 0, sizeof(uart_buf));
+	  sprint(uart_buf,"%08X => %08X\r\n", flash_addr, *(flash_addr));
+	  HAL_UART_Transmit(&huart3, uart_buf, sizeof(uart_buf),100);
+	  flash_addr++;
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */

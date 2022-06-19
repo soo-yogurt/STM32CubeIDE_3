@@ -1,17 +1,38 @@
-11:18:37 **** Incremental Build of configuration Debug for project 2022_06_15_Time_workspace1 ****
+09:37:48 **** Incremental Build of configuration Debug for project 2022_06_15_Time_workspace1 ****
 make -j8 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:116:11: warning: passing argument 1 of 'memset' makes pointer from integer without a cast [-Wint-conversion]
+  116 |    memset(uart_buf, 0, sizeof(uart_buf));
+      |           ^~~~~~~~
+      |           |
+      |           int
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.9.0\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\string.h:33:17: note: expected 'void *' but argument is of type 'int'
+   33 | void *  memset (void *, int, size_t);
+      |                 ^~~~~~
+../Core/Src/main.c:117:4: warning: implicit declaration of function 'sprint'; did you mean 'sprintf'? [-Wimplicit-function-declaration]
+  117 |    sprint(uart_buf,"%08X => %08X\r\n", flash_addr, *(flash_addr));
+      |    ^~~~~~
+      |    sprintf
+../Core/Src/main.c:118:31: warning: passing argument 2 of 'HAL_UART_Transmit' makes pointer from integer without a cast [-Wint-conversion]
+  118 |    HAL_UART_Transmit(&huart3, uart_buf, sizeof(uart_buf),100);
+      |                               ^~~~~~~~
+      |                               |
+      |                               int
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:407,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:722:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'int'
+  722 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~~~~~~~^~~~~
 arm-none-eabi-gcc -o "2022_06_15_Time_workspace1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\workspace_stm32\STM32CubeIDE_3\2022_06_15_Time_workspace1\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="2022_06_15_Time_workspace1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: 2022_06_15_Time_workspace1.elf
- 
-arm-none-eabi-size   2022_06_15_Time_workspace1.elf 
-arm-none-eabi-objdump -h -S  2022_06_15_Time_workspace1.elf  > "2022_06_15_Time_workspace1.list"
-   text	   data	    bss	    dec	    hex	filename
-  15264	    120	   1784	  17168	   4310	2022_06_15_Time_workspace1.elf
-Finished building: default.size.stdout
- 
-Finished building: 2022_06_15_Time_workspace1.list
- 
+c:\st\stm32cubeide_1.9.0\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\bin\ld.exe: ./Core/Src/main.o: in function `main':
+C:/workspace_stm32/STM32CubeIDE_3/2022_06_15_Time_workspace1/Debug/../Core/Src/main.c:117: undefined reference to `sprint'
+collect2.exe: error: ld returned 1 exit status
+make: *** [makefile:64: 2022_06_15_Time_workspace1.elf] Error 1
+"make -j8 all" terminated with exit code 2. Build might be incomplete.
 
-11:18:38 Build Finished. 0 errors, 0 warnings. (took 1s.458ms)
+09:37:51 Build Failed. 3 errors, 3 warnings. (took 3s.140ms)
 
