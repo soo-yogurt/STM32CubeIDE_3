@@ -1,0 +1,10 @@
+15:33:11 **** Incremental Build of configuration Debug for project 2022_06_19_I2C_workspace ****
+make -j8 all 
+arm-none-eabi-size   2022_06_19_I2C_workspace.elf 
+   text	   data	    bss	    dec	    hex	filename
+  16492	    120	   1776	  18388	   47d4	2022_06_19_I2C_workspace.elf
+Finished building: default.size.stdout
+ 
+
+15:33:11 Build Finished. 0 errors, 0 warnings. (took 559ms)
+
