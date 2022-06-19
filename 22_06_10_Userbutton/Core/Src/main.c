@@ -111,7 +111,7 @@ HAL_StatusTypeDef LCD_SendInternal(uint8_t lcd_addr, uint8_t data, uint8_t flags
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int __io_putchar(int ch) {
-	HAL_UART_Transmit(&huart3, &ch, 1, 100);
+	HAL_UART_Transmit(&huart3, (uint8_t*)ch, 1, 100);
 	return ch;
 }
 /* USER CODE END 0 */
@@ -123,8 +123,7 @@ int __io_putchar(int ch) {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	char temp[20];
-	char buf[20];
+	char buf[25];
 	char ampm[2][3] = {"AM", "PM"};
 
   /* USER CODE END 1 */
@@ -157,7 +156,7 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-/*  init();*/
+  init();
   HAL_TIM_Base_Init(&htim3);
   HAL_TIM_Base_Start_IT(&htim3);
 
@@ -173,6 +172,8 @@ int main(void)
 
   HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
   HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+  memset(buf, 0, sizeof(buf));
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -186,28 +187,13 @@ int main(void)
 		{
 			HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN); // 시간 정보 얻어오기
 			HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN); // 날짜 정보 얻어오기
-			//printf("flag0에 들어왔습니다.");
-
-/*			  sprintf(temp,"\r\n20%02d-%02d-%02d %s %02d:%02d:%02d", sDate.Year, sDate.Month,
-			 	         sDate.Date, ampm[sTime.TimeFormat], sTime.Hours, sTime.Minutes,
-			 	         sTime.Seconds);*/
-
-			  //LCD Clock
-
-/*			  // set address to 0x00
-			  LCD_SendCommand(LCD_ADDR, 0b10000000);
-			  LCD_SendString(LCD_ADDR, " Using 1602 LCD");
-
-			  // set address to 0x40
-			  LCD_SendCommand(LCD_ADDR, 0b11000000);
-			   LCD_SendString(LCD_ADDR, "  over I2C bus");*/
-			  sprintf(buf, "%s  %02d:%02d:%02d   ", ampm[sTime.TimeFormat], sTime.Hours, sTime.Minutes, sTime.Seconds);
-//			  HAL_UART_Transmit(&huart3, buf, sizeof(buf), 1000);
-			  LCD_SendCommand(LCD_ADDR, 0b10000000);
-			  LCD_SendString(LCD_ADDR, " @   LCD Clock  ");
-			  LCD_SendCommand(LCD_ADDR, 0b11000000);
-			  LCD_SendString(LCD_ADDR, buf);
-			  printf("buf : %s\r\n", buf);
+			HAL_UART_Transmit(&huart3, (uint8_t*)buf, sizeof(buf), 2000);
+			printf("\r\n");
+			sprintf(buf, " %s %02d:%02d:%02d  ", ampm[sTime.TimeFormat], sTime.Hours, sTime.Minutes, sTime.Seconds);
+			LCD_SendCommand(LCD_ADDR, 0b10000000);
+			LCD_SendString(LCD_ADDR, " @   LCD Clock  ");
+			LCD_SendCommand(LCD_ADDR, 0b11000000);
+			LCD_SendString(LCD_ADDR, buf);
 		}
 
 		//시간 수정
