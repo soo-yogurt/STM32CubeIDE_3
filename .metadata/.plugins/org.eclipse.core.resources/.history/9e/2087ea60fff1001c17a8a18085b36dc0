@@ -284,7 +284,7 @@ int main(void) {
 					//printf("LEFT\r\n");
 					adc_point = 3;
 					if (location < 0) {
-						LCD_SendCommand(LCD_ADDR, 0b11000000); //  여기 수정해야해 여기 수정해야해 여기 수정해야해 여기가 문제야 여기야
+						LCD_SendCommand(LCD_ADDR, 0b11000000);
 					} else {
 						LCD_SendCommand(LCD_ADDR, 0b00000010);
 						location--;
