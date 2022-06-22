@@ -107,7 +107,7 @@ void LCD_SendCommand(uint8_t lcd_addr, uint8_t cmd);
 void LCD_SendData(uint8_t lcd_addr, uint8_t data);
 HAL_StatusTypeDef LCD_SendInternal(uint8_t lcd_addr, uint8_t data,
 		uint8_t flags);
-void AdcSwitch(uint8_t *adc_point, int *location);
+
 void bufferState();
 /* USER CODE END PFP */
 
@@ -210,12 +210,54 @@ int main(void) {
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
 			LCD_SendString(LCD_ADDR, " @   Set Time  ");
 			bufferState();
-			location = 0;
 			//**********************************************************************
 			while (flag == 1) {
-				AdcSwitch(&adc_point, &location);
+
+/*
+				//**********************************************************************
+				if ((ADC_value <= UP_KEY_MAX) && (adc_point != 1)) {
+					printf("UP\r\n");
+					adc_point = 1;
+					//	LCD_SendCommand(LCD_ADDR, 0b10000000);
+				}
+				//**********************************************************************
+				if ((ADC_value >= DOWN_KEY_MIN && ADC_value <= DOWN_KEY_MAX)
+						&& (adc_point != 2)) {
+					printf("DOWN\r\n");
+					LCD_SendCommand(LCD_ADDR, 0b11000000);
+					adc_point = 2;
+				}
+				//**********************************************************************
+				if ((ADC_value >= LEFT_KEY_MIN && ADC_value <= LEFT_KEY_MAX)
+						&& (adc_point != 3)) {
+					//printf("LEFT\r\n");
+					adc_point = 3;
+					if (location < 0) {
+						LCD_SendCommand(LCD_ADDR, 0b11000000);
+						location = 0;
+					} else {
+						LCD_SendCommand(LCD_ADDR, 0b00000010);
+						location--;
+					}
+				}
+				//**********************************************************************
+				if ((ADC_value >= RIGHT_KEY_MIN && ADC_value <= RIGHT_KEY_MAX)
+						&& (adc_point != 4)) {
+					//printf("RIGHT\r\n");
+					adc_point = 4;
+					if (location < 12) {
+						location++;
+						LCD_SendCommand(LCD_ADDR, 0b00010100);
+					} else if (location >= 12)
+						location = 12;
+				}
+				if (ADC_value > RIGHT_KEY_MAX && adc_point != 0) {
+					adc_point = 0;
+				}
+				//**********************************************************************
+*/
 			}
-			//**********************************************************************
+
 		}
 		//alarm
 		else if (flag == 2) {
@@ -223,14 +265,56 @@ int main(void) {
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
 			LCD_SendString(LCD_ADDR, " @   alarm     ");
 			bufferState();
-			location = 0;
 			//**********************************************************************
 			while (flag == 2) {
-				AdcSwitch(&adc_point, &location);
+
+				//**********************************************************************
+				if ((ADC_value <= UP_KEY_MAX) && (adc_point != 1)) {
+					printf("UP\r\n");
+					adc_point = 1;
+					//	LCD_SendCommand(LCD_ADDR, 0b10000000);
+				}
+				//**********************************************************************
+				if ((ADC_value >= DOWN_KEY_MIN && ADC_value <= DOWN_KEY_MAX)
+						&& (adc_point != 2)) {
+					printf("DOWN\r\n");
+					LCD_SendCommand(LCD_ADDR, 0b11000000);
+					adc_point = 2;
+				}
+				//**********************************************************************
+				if ((ADC_value >= LEFT_KEY_MIN && ADC_value <= LEFT_KEY_MAX)
+						&& (adc_point != 3)) {
+					//printf("LEFT\r\n");
+					adc_point = 3;
+					if (location < 0) {
+						LCD_SendCommand(LCD_ADDR, 0b11000000);
+						location = 0;
+					} else {
+						LCD_SendCommand(LCD_ADDR, 0b00000010);
+						location--;
+					}
+				}
+				//**********************************************************************
+				if ((ADC_value >= RIGHT_KEY_MIN && ADC_value <= RIGHT_KEY_MAX)
+						&& (adc_point != 4)) {
+					//printf("RIGHT\r\n");
+					adc_point = 4;
+					if (location < 12) {
+						location++;
+						LCD_SendCommand(LCD_ADDR, 0b00010100);
+					} else if (location >= 12)
+						location = 12;
+				}
+				if (ADC_value > RIGHT_KEY_MAX && adc_point != 0) {
+					adc_point = 0;
+				}
+				//**********************************************************************
+
 			}
 			//**********************************************************************
 		} else if (flag > 2)
 			flag = 0;
+
 	}
 	/* USER CODE END 3 */
 }
@@ -305,6 +389,7 @@ void bufferState() {
 		LCD_SendCommand(LCD_ADDR, 0b11000000);
 		LCD_SendString(LCD_ADDR, " ");
 		LCD_SendCommand(LCD_ADDR, 0b00001111);
+		LCD_SendCommand(LCD_ADDR, 0b00010000);
 	} else
 		LCD_SendCommand(LCD_ADDR, 0b00001110);
 }
@@ -423,6 +508,14 @@ void LCD_SendString(uint8_t lcd_addr, char *str) {
 void init() {
 	I2C_Scan();
 	LCD_Init(LCD_ADDR);
+
+	/*    // set address to 0x00
+	 LCD_SendCommand(LCD_ADDR, 0b10000000);
+	 LCD_SendString(LCD_ADDR, " Using 1602 LCD");
+
+	 // set address to 0x40
+	 LCD_SendCommand(LCD_ADDR, 0b11000000);
+	 LCD_SendString(LCD_ADDR, "  over I2C bus");*/
 }
 
 void loop() {
@@ -432,55 +525,50 @@ void loop() {
 
 void AdcSwitch(uint8_t *adc_point, int *location)
 {
-	//***************** UP *************************************************
-	if ((ADC_value <= UP_KEY_MAX) && (*adc_point != 1)){
+	//**********************************************************************
+	if ((ADC_value <= UP_KEY_MAX) && (*adc_point != 1)) {
+		printf("UP\r\n");
 		*adc_point = 1;
-	}
-	//***************** DOWN ***********************************************
-	if ((ADC_value >= DOWN_KEY_MIN && ADC_value <= DOWN_KEY_MAX)
-			&& (*adc_point != 2)) {
-		LCD_SendCommand(LCD_ADDR, 0b11000000);
-		*adc_point = 2;
-	}
-	//****************** LEFT **********************************************
-	if ((ADC_value >= LEFT_KEY_MIN && ADC_value <= LEFT_KEY_MAX)
-			&& (*adc_point != 3)) {
-		*adc_point = 3;
-		if(*location <= 0)
-			*location = 0;
-		else
-		{
-			LCD_SendCommand(LCD_ADDR, 0b00010000);
-			(*location)--;
-		}
-	}
-	//***************** RIGHT **********************************************
-	if ((ADC_value >= RIGHT_KEY_MIN && ADC_value <= RIGHT_KEY_MAX)
-			&& (*adc_point != 4)) {
-		*adc_point = 4;
-		if (*location >= 12)
-			*location = 12;
-		else
-		{
-			if(*location == 0)
-			{
-				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				(*location) += 2;
-			}
-			if(*location == 4 || *location == 7 || *location == 10)
-			{
-				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				(*location) += 1;
-			}
-			LCD_SendCommand(LCD_ADDR, 0b00010100);
-			(*location)++;
-		}
-	}
-	if (ADC_value > RIGHT_KEY_MAX && *adc_point != 0) {
-		*adc_point = 0;
+		//	LCD_SendCommand(LCD_ADDR, 0b10000000);
 	}
 	//**********************************************************************
+	if ((ADC_value >= DOWN_KEY_MIN && ADC_value <= DOWN_KEY_MAX)
+			&& (adc_point != 2)) {
+		printf("DOWN\r\n");
+		LCD_SendCommand(LCD_ADDR, 0b11000000);
+		adc_point = 2;
+	}
+	//**********************************************************************
+	if ((ADC_value >= LEFT_KEY_MIN && ADC_value <= LEFT_KEY_MAX)
+			&& (adc_point != 3)) {
+		//printf("LEFT\r\n");
+		adc_point = 3;
+		if (location < 0) {
+			LCD_SendCommand(LCD_ADDR, 0b11000000);
+			location = 0;
+		} else {
+			LCD_SendCommand(LCD_ADDR, 0b00000010);
+			location--;
+		}
+	}
+	//**********************************************************************
+	if ((ADC_value >= RIGHT_KEY_MIN && ADC_value <= RIGHT_KEY_MAX)
+			&& (adc_point != 4)) {
+		//printf("RIGHT\r\n");
+		adc_point = 4;
+		if (location < 12) {
+			location++;
+			LCD_SendCommand(LCD_ADDR, 0b00010100);
+		} else if (location >= 12)
+			location = 12;
+	}
+	if (ADC_value > RIGHT_KEY_MAX && adc_point != 0) {
+		adc_point = 0;
+	}
+	//**********************************************************************
+
+
+
 
 }
 /* USER CODE END 4 */

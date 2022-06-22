@@ -446,6 +446,7 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 	if ((ADC_value >= LEFT_KEY_MIN && ADC_value <= LEFT_KEY_MAX)
 			&& (*adc_point != 3)) {
 		*adc_point = 3;
+
 		if(*location <= 0)
 			*location = 0;
 		else
@@ -462,17 +463,6 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 			*location = 12;
 		else
 		{
-			if(*location == 0)
-			{
-				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				(*location) += 2;
-			}
-			if(*location == 4 || *location == 7 || *location == 10)
-			{
-				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				(*location) += 1;
-			}
 			LCD_SendCommand(LCD_ADDR, 0b00010100);
 			(*location)++;
 		}

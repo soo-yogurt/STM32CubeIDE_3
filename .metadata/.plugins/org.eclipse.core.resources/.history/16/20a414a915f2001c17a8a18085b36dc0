@@ -466,13 +466,10 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 			{
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				(*location) += 2;
-			}
-			if(*location == 4 || *location == 7 || *location == 10)
-			{
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
-				(*location) += 1;
+				(*location) += 3;
 			}
+
 			LCD_SendCommand(LCD_ADDR, 0b00010100);
 			(*location)++;
 		}
