@@ -233,7 +233,7 @@ int main(void)
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
 			LCD_SendString(LCD_ADDR, " @   alarm     ");
 			//********************* Display ** LINE 2 ******************************
-			sprintf(buf, "%s %02d:%02d:%02d %s ", ampm[sTime.TimeFormat],
+			sprintf(buf, "%s %02d:%02d:%02d %s", ampm[sTime.TimeFormat],
 									sTime.Hours, sTime.Minutes, sTime.Seconds, alarmSet[i]);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
 			LCD_SendString(LCD_ADDR, buf);
@@ -460,11 +460,6 @@ void SetTime(const int *location)
 							sTime.Hours, sTime.Minutes, sTime.Seconds);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, buf);
-
-	for(int j = 15; j <= (*location); j--)
-	{
-		LCD_SendCommand(LCD_ADDR, 0b00010000);
-	}
 
 }
 

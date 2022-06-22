@@ -87,9 +87,6 @@ uint8_t flag = 0;
 uint8_t mode = 1;
 RTC_TimeTypeDef sTime = { 0 };
 RTC_DateTypeDef sDate = { 0 };
-char buf[25];
-char ampm[2][3] = { "AM", "PM" };
-char alarmSet[2][4] = { "ON ", "OFF" };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -129,7 +126,9 @@ int __io_putchar(int ch) {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	char buf[25];
+	char ampm[2][3] = { "AM", "PM" };
+	char alarmSet[2][4] = { "ON ", "OFF" };
 	int location = 0;
 	uint8_t adc_point = 0;
 	int i = 1;
@@ -233,7 +232,7 @@ int main(void)
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
 			LCD_SendString(LCD_ADDR, " @   alarm     ");
 			//********************* Display ** LINE 2 ******************************
-			sprintf(buf, "%s %02d:%02d:%02d %s ", ampm[sTime.TimeFormat],
+			sprintf(buf, "%s %02d:%02d:%02d %s", ampm[sTime.TimeFormat],
 									sTime.Hours, sTime.Minutes, sTime.Seconds, alarmSet[i]);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
 			LCD_SendString(LCD_ADDR, buf);
@@ -460,11 +459,6 @@ void SetTime(const int *location)
 							sTime.Hours, sTime.Minutes, sTime.Seconds);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, buf);
-
-	for(int j = 15; j <= (*location); j--)
-	{
-		LCD_SendCommand(LCD_ADDR, 0b00010000);
-	}
 
 }
 
