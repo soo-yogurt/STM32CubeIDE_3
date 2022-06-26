@@ -91,6 +91,7 @@ ClickInfoDef click[3];
 int current_time = 0;
 int time_interval = 0;
 int last_time = 0;
+int alarmMode = 1;
 uint8_t longClick = 0;
 int ADC_value;
 uint8_t rx;
@@ -99,7 +100,8 @@ uint8_t mode = 1;
 RTC_TimeTypeDef sTime = { 0 };
 RTC_DateTypeDef sDate = { 0 };
 char buf[25];
-char temp[25]; // set Time / set Alarm
+char temp[25]; // set Time
+char buf2[25]; //  set Alarm
 char ampm[2][3] = { "AM", "PM" };
 char alarmSet[2][4] = { "ON ", "OFF" };
 // ---------------------------------------------------------------------------------
@@ -127,8 +129,8 @@ HAL_StatusTypeDef LCD_SendInternal(uint8_t lcd_addr, uint8_t data,
 void AdcSwitch(uint8_t *adc_point, int *location);
 void bufferState();
 void SetTimeUp(const int *location);
-void SaveAlarm(const int *location);
-void SaveSeting(const int *location);
+void SaveAlarm();
+void SaveSeting();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -149,7 +151,7 @@ int main(void)
 
 	int location = 0;
 	uint8_t adc_point = 0;
-	int i = 1;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -184,6 +186,12 @@ int main(void)
 	HAL_TIM_Base_Init(&htim3);
 	HAL_TIM_Base_Start_IT(&htim3);
 
+	at.f = 0;
+	at.h = 12;
+	at.m = 30;
+	at.s = 30;
+
+
 	sTime.Hours = 12;
 	sTime.Minutes = 0;
 	sTime.Seconds = 0;
@@ -204,15 +212,18 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+		char alarmOnOff[2][2] = {"A", " "};
+		char flag1buf[25];
 		//clock
 		if (flag == 0) {
 			//********************** cursor ****************************************
 			bufferState();
 			//********************* Display ** LINE 1 ******************************
+			sprintf(flag1buf, " %s   LCD Clock  ", alarmOnOff[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, " @   LCD Clock  ");
+			LCD_SendString(LCD_ADDR, flag1buf);
 			//********************* Display ** LINE 2 ******************************
+			location = 0;
 			while (flag == 0) {
 				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 				HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
@@ -228,10 +239,11 @@ int main(void)
 		//set Time
 		else if (flag == 1) {
 			//********************* Display ** LINE 1 ******************************
+			sprintf(flag1buf, " %s   Set Time   ", alarmOnOff[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, " @   Set Time  ");
+			LCD_SendString(LCD_ADDR, flag1buf);
 			//********************* Display ** LINE 2 ******************************
-			sprintf(buf, "%s %02d:%02d:%02d Save", ampm[sTime.TimeFormat],
+			sprintf(buf, "%s %02d:%02d:%02d     ", ampm[sTime.TimeFormat],
 									sTime.Hours, sTime.Minutes, sTime.Seconds);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
 			LCD_SendString(LCD_ADDR, buf);
@@ -244,29 +256,37 @@ int main(void)
 			st.m = sTime.Minutes;
 			st.s = sTime.Seconds;
 			//**********************************************************************
+			longClick = 0;
 			while (flag == 1) {
 				AdcSwitch(&adc_point, &location);
-				SaveSeting(&location);
-																												// 세이브 되면 flag를 0으로 돌리자. // 알람에서 셋팅 되면 화면 출력 ON / OFF 바꾸기...
+				SaveSeting();
 			}
 			//**********************************************************************
 		}
 		//alarm
 		else if (flag == 2) {
 			//********************* Display ** LINE 1 ******************************
+			sprintf(flag1buf, " %s   alarm      ", alarmOnOff[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, " @   alarm     ");
+			LCD_SendString(LCD_ADDR, flag1buf);
 			//********************* Display ** LINE 2 ******************************
-			sprintf(buf, "%s %02d:%02d:%02d %s ", ampm[sTime.TimeFormat],
-									sTime.Hours, sTime.Minutes, sTime.Seconds, alarmSet[i]);
+			sprintf(buf2, "%s %02d:%02d:%02d %s ", ampm[at.f],
+									at.h, at.m, at.s, alarmSet[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
-			LCD_SendString(LCD_ADDR, buf);
+			LCD_SendString(LCD_ADDR, buf2);
 			//********************** cursor ****************************************
 			bufferState();
 			location = 0;
+			//***********************st 초기화 *******************************************
+			st.f = at.f;
+			st.h = at.h;
+			st.m = at.m;
+			st.s = at.s;
 			//**********************************************************************
+			longClick = 0;
 			while (flag == 2) {
 				AdcSwitch(&adc_point, &location);
+				SaveAlarm();
 			}
 			//**********************************************************************
 		} else if (flag > 2)
@@ -362,7 +382,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 		pin = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
 
-		if (time_interval <= 2) {
+		if (time_interval <= 4) {
 			printf("Noise %d, %d\r\n", pin, time_interval);
 		} else {
 
@@ -472,25 +492,25 @@ void init() {
 void loop() {
 	HAL_Delay(100);
 }
-void SaveAlarm(const int *location)
+void SaveAlarm()
 {
 	/***************** Save 기능 **************************/
-	if(*location == 12 && longClick == 1)
+	if(longClick == 1)
 	{
 		at.f = st.f;
 		at.h = st.h;
 		at.m = st.m;
 		at.s = st.s;
-
 		longClick = 0;
+		flag = 0;
 	}
 }
 
-void SaveSeting(const int *location)
+void SaveSeting()
 {
 
 	/***************** Save 기능 **************************/
-	if(*location == 12 && longClick == 1)
+	if(longClick == 1)
 	{
 		sTime.TimeFormat = st.f;
 		sTime.Hours = st.h;
@@ -501,6 +521,7 @@ void SaveSeting(const int *location)
 		HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
 		longClick = 0;
+		flag = 0;
 	}
 }
 void SetTimeDown(const int *location)
@@ -539,14 +560,19 @@ void SetTimeDown(const int *location)
 			st.s += 9;
 		else
 			st.s--;
-	}
+	} else if (*location == 12 && flag == 2)
+		alarmMode ^= 1;
+
 	char format[3];
 	if(st.f == 0)
 		strcpy(format, "AM");
 	else if(st.f == 1)
 		strcpy(format, "PM");
 	/****************** Display *************************************/
-	sprintf(temp, "%s %02d:%02d:%02d Save", format, st.h, st.m, st.s);
+	if(flag == 1)
+		sprintf(temp, "%s %02d:%02d:%02d     ", format, st.h, st.m, st.s);
+	else if(flag == 2)
+		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s, alarmSet[alarmMode]);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, temp);
 
@@ -595,14 +621,18 @@ void SetTimeUp(const int *location)
 			st.s -=9;
 		else
 			st.s++;
-	}
+	} else if (*location == 12 && flag == 2)
+		alarmMode ^= 1;
 	char format[3];
 	if(st.f == 0)
 		strcpy(format, "AM");
 	else if(st.f == 1)
 		strcpy(format, "PM");
 	/****************** Display *************************************/
-	sprintf(temp, "%s %02d:%02d:%02d Save", format, st.h, st.m, st.s);
+	if(flag == 1)
+		sprintf(temp, "%s %02d:%02d:%02d Save", format, st.h, st.m, st.s);
+	else if(flag == 2)
+		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s, alarmSet[alarmMode]);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, temp);
 
