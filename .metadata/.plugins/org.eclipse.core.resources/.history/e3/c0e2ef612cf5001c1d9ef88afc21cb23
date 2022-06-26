@@ -127,7 +127,6 @@ HAL_StatusTypeDef LCD_SendInternal(uint8_t lcd_addr, uint8_t data,
 void AdcSwitch(uint8_t *adc_point, int *location);
 void bufferState();
 void SetTimeUp(const int *location);
-void SaveAlarm(const int *location);
 void SaveSeting(const int *location);
 /* USER CODE END PFP */
 
@@ -247,7 +246,6 @@ int main(void)
 			while (flag == 1) {
 				AdcSwitch(&adc_point, &location);
 				SaveSeting(&location);
-																												// 세이브 되면 flag를 0으로 돌리자. // 알람에서 셋팅 되면 화면 출력 ON / OFF 바꾸기...
 			}
 			//**********************************************************************
 		}
@@ -472,19 +470,22 @@ void init() {
 void loop() {
 	HAL_Delay(100);
 }
-void SaveAlarm(const int *location)
+void SaveSeting(const int *location)
 {
+
 	/***************** Save 기능 **************************/
 	if(*location == 12 && longClick == 1)
 	{
-		at.f = st.f;
-		at.h = st.h;
-		at.m = st.m;
-		at.s = st.s;
+		st.at = st.f;
+		st.at = st.h;
+		st.at = st.m;
+		st.at = st.s;
 
 		longClick = 0;
 	}
 }
+
+
 
 void SaveSeting(const int *location)
 {

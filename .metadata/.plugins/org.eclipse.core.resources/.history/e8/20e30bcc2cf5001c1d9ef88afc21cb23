@@ -247,7 +247,6 @@ int main(void)
 			while (flag == 1) {
 				AdcSwitch(&adc_point, &location);
 				SaveSeting(&location);
-																												// 세이브 되면 flag를 0으로 돌리자. // 알람에서 셋팅 되면 화면 출력 ON / OFF 바꾸기...
 			}
 			//**********************************************************************
 		}
