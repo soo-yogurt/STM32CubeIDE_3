@@ -6418,3 +6418,18 @@ java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbu
 	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
 	at elf_analyzer.ElfAnalyzerView.lambda$7(ElfAnalyzerView.java:492)
 	at java.base/java.lang.Thread.run(Thread.java:829)
+!SESSION 2022-06-27 08:37:26.008 -----------------------------------------------
+eclipse.buildId=Version 1.9.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ko_KR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-06-27 08:37:39.229
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-06-27 08:37:39.398
+!MESSAGE Log4j initialized with config file C:\workspace_stm32\STM32CubeIDE_3\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-06-27 08:37:49.629
+!MESSAGE Started RMI Server, listening on port 41337

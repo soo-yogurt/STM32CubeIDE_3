@@ -651,23 +651,27 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 	//***************** UP *************************************************
 	if ((ADC_value <= UP_KEY_MAX) && (*adc_point != 1)){
 		*adc_point = 1;
+		printf("ADC_value = %d\r\n", ADC_value);
 		SetTimeUp(location);
 	}
 	//***************** DOWN ***********************************************
 	if ((ADC_value >= DOWN_KEY_MIN && ADC_value <= DOWN_KEY_MAX)
 			&& (*adc_point != 2)) {
 		*adc_point = 2;
+		printf("ADC_value = %d\r\n", ADC_value);
 		SetTimeDown(location);
 	}
 	//****************** LEFT **********************************************
 	if ((ADC_value >= LEFT_KEY_MIN && ADC_value <= LEFT_KEY_MAX)
 			&& (*adc_point != 3)) {
+		printf("ADC_value = %d\r\n", ADC_value);
 		*adc_point = 3;
 	//****************** LEFT **********************************************
 		if(*location <= 0){
 			for(int r = 0; r < 12; r++){
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
 			}
+
 		*location = 12;
 		}
 
@@ -692,6 +696,7 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 	//***************** RIGHT **********************************************
 	if ((ADC_value >= RIGHT_KEY_MIN && ADC_value <= RIGHT_KEY_MAX)
 			&& (*adc_point != 4)) {
+		printf("ADC_value = %d\r\n", ADC_value);
 		*adc_point = 4;
 	//***************** RIGHT **********************************************
 		if (*location >= 12){
