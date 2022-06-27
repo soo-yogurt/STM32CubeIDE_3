@@ -10,7 +10,6 @@
 "./Core/Src/system_stm32f4xx.o"
 "./Core/Src/tim.o"
 "./Core/Src/usart.o"
-"./Core/Src/user_exti.o"
 "./Core/Startup/startup_stm32f429zitx.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o"
