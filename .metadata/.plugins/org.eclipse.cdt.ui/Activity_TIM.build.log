@@ -1,0 +1,10 @@
+18:04:20 **** Incremental Build of configuration Debug for project Activity_TIM ****
+make -j8 all 
+arm-none-eabi-size   Activity_TIM.elf 
+   text	   data	    bss	    dec	    hex	filename
+  14060	    364	   1740	  16164	   3f24	Activity_TIM.elf
+Finished building: default.size.stdout
+ 
+
+18:04:21 Build Finished. 0 errors, 0 warnings. (took 571ms)
+
