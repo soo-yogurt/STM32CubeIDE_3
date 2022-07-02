@@ -1,4 +1,4 @@
-09:17:12 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+17:55:47 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
 make -j8 all 
 arm-none-eabi-gcc "../Core/Src/adc.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/adc.d" -MT"Core/Src/adc.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/adc.o"
 arm-none-eabi-gcc "../Core/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/gpio.d" -MT"Core/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/gpio.o"
@@ -18,11 +18,11 @@ Finished building target: 22_06_10_Userbutton.elf
 arm-none-eabi-size   22_06_10_Userbutton.elf 
 arm-none-eabi-objdump -h -S  22_06_10_Userbutton.elf  > "22_06_10_Userbutton.list"
    text	   data	    bss	    dec	    hex	filename
-  31748	    140	   2148	  34036	   84f4	22_06_10_Userbutton.elf
+  34060	    140	   2220	  36420	   8e44	22_06_10_Userbutton.elf
 Finished building: default.size.stdout
  
 Finished building: 22_06_10_Userbutton.list
  
 
-09:17:15 Build Finished. 0 errors, 0 warnings. (took 2s.367ms)
+17:55:50 Build Finished. 0 errors, 0 warnings. (took 2s.583ms)
 

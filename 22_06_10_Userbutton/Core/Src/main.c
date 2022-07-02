@@ -77,6 +77,24 @@ typedef struct {
 #define BACKLIGHT (1 << 3)
 
 #define LCD_DELAY_MS 5
+
+
+
+#define C 956 // 도
+#define D 852
+#define E 758
+#define F 716
+#define G 638 // 솔
+#define A 568
+#define B 506
+#define C_ 902 // C#
+#define D_ 804
+#define F_ 676
+#define A_ 536
+#define M 0 // mute
+
+// 숫자가 클수록 소리가 작아진다.
+#define VOLUME 300
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -107,6 +125,32 @@ char alarmSet[2][4] = { "ON ", "OFF" };
 // ---------------------------------------------------------------------------------
 SETTIME st;
 SETTIME at;
+
+
+
+uint16_t bicycle[] = {E, G, G, M, E, G, G, M, A, A, A, A, A, M}; //, G, G, M, A, A, A, A, A};
+uint16_t interval[] = {125, 125, 250, 250, 125, 125, 250, 0, 125, 125, 125, 125, 375, 625};
+uint16_t mute[] =    {125, 125, 0, 0, 125, 125, 0, 0, 125, 125, 125, 125, 125, 0};
+
+uint16_t bicycle_2[] = {G, G, G, G, F, F, F, F, E, E, E, E, E, M};
+uint16_t interval_2[] = {125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 375, 625};
+uint16_t mute_2[] = {125, 125, 125 ,125, 125, 125, 125 ,125, 125, 125, 125 ,125, 125, 0};
+
+uint16_t bicycle_3[] = {E, G, G, G, E, G, G, M, A, A, E, E, G, M};
+uint16_t interval_3[] = {125, 125, 125, 125, 125, 125, 250, 250, 200, 75, 125, 125, 375, 625};
+uint16_t mute_3[] = {125, 125, 125 ,125, 125, 125 ,0, 0, 125, 50, 75, 125, 125, 125, 0};
+
+
+uint16_t bicycle_4[] = {F, F, F, F, E, E, E, E, D, D, G, G, C, M};
+uint16_t interval_4[] = {125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 375, 625};
+uint16_t mute_4[] = {125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 0};
+
+uint8_t bell_length = sizeof(bicycle)/sizeof(uint16_t);
+uint8_t bell_length_2 = sizeof(bicycle_2)/sizeof(uint16_t);
+uint8_t bell_length_3 = sizeof(bicycle_3)/sizeof(uint16_t);
+uint8_t bell_length_4 = sizeof(bicycle_4)/sizeof(uint16_t);
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -131,6 +175,8 @@ void bufferState();
 void SetTimeUp(const int *location);
 void SaveAlarm();
 void SaveSeting();
+
+void BicycleSong();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -178,10 +224,14 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+
+
+   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	init();
 	HAL_TIM_Base_Init(&htim3);
 	HAL_TIM_Base_Start_IT(&htim3);
@@ -728,6 +778,38 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 	}
 	//**********************************************************************
 
+}
+
+void BicycleSong()
+{
+	 for(int i = 0; i < bell_length; i++){
+		  TIM2 -> ARR = bicycle[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute[i]);
+	  }
+	  for(int i = 0; i < bell_length_2; i++){
+		  TIM2 -> ARR = bicycle_2[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval_2[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute_2[i]);
+	  }
+	  for(int i = 0; i < bell_length_3; i++){
+		  TIM2 -> ARR = bicycle_3[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval_3[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute_3[i]);
+	  }
+	  for(int i = 0; i < bell_length_4; i++){
+		  TIM2 -> ARR = bicycle_4[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval_4[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute_4[i]);
+	  }
 }
 /* USER CODE END 4 */
 

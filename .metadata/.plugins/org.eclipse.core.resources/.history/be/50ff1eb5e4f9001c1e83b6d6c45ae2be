@@ -1,0 +1,34 @@
+#include "Song.h"
+
+
+void BicycleSong()
+{
+	 for(int i = 0; i < bell_length; i++){
+		  TIM2 -> ARR = bicycle[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute[i]);
+	  }
+	  for(int i = 0; i < bell_length_2; i++){
+		  TIM2 -> ARR = bicycle_2[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval_2[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute_2[i]);
+	  }
+	  for(int i = 0; i < bell_length_3; i++){
+		  TIM2 -> ARR = bicycle_3[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval_3[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute_3[i]);
+	  }
+	  for(int i = 0; i < bell_length_4; i++){
+		  TIM2 -> ARR = bicycle_4[i];
+		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+		  HAL_Delay(interval_4[i]);
+		  TIM2 -> CCR1 = 0;
+		  HAL_Delay(mute_4[i]);
+	  }
+}
