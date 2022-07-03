@@ -7890,3 +7890,18 @@ java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton
 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1256)
 	at java.base/java.lang.Thread.run(Thread.java:829)
+!SESSION 2022-07-03 01:05:56.969 -----------------------------------------------
+eclipse.buildId=Version 1.9.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ko_KR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-07-03 01:06:24.552
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-07-03 01:06:24.699
+!MESSAGE Log4j initialized with config file C:\workspace_stm32\STM32CubeIDE_3\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-07-03 01:06:41.737
+!MESSAGE Started RMI Server, listening on port 41337
