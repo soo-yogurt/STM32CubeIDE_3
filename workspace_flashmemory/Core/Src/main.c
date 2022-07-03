@@ -29,7 +29,20 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef struct FLAHTIME{
+	uint8_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t format;
+	uint8_t hour;
+	uint8_t minutes;
+	uint8_t seconds;
+	uint8_t alramFormat;
+	uint8_t alramHour;
+	uint8_t alramMinutes;
+	uint8_t alramSeconds;
 
+} FT;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -66,6 +79,7 @@ uint32_t FirstSector = 0, NbOfSectors = 0;
 uint32_t Address = 0, SECTORError = 0;
 __IO uint32_t data32 = 0 , MemoryProgramStatus = 0;
 static uint32_t GetSectorSize(uint32_t Sector);
+FT flashTime;
 /* USER CODE END 0 */
 
 /**
@@ -98,7 +112,14 @@ int main(void)
   MX_RTC_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  flashTime.format = 0; // AM
+  flashTime.hour = 12;
+  flashTime.minutes = 0;
+  flashTime.seconds = 0;
+  flashTime.alramFormat = 0; // AM
+  flashTime.alramHour = 12;
+  flashTime.alramMinutes = 0;
+  flashTime.alramSeconds = 0;
 
   /* Unlock the Flash to enable the flash control register access *************/
   HAL_FLASH_Unlock();
@@ -137,7 +158,7 @@ int main(void)
 
   Address = FLASH_USER_START_ADDR;
 
-  while(Address < FLASH_USER_END_ADDR)
+/*  while(Address < FLASH_USER_END_ADDR)
   {
     if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address, DATA_32) == HAL_OK)
     {
@@ -145,11 +166,36 @@ int main(void)
     }
    else
     {
-      /* Error occurred while writing data in Flash memory.
-         User can add here some code to deal with this error */
+       Error occurred while writing data in Flash memory.
+         User can add here some code to deal with this error
 
     }
-  }
+  }*/
+
+
+     if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address, flashTime.format) == HAL_OK)
+     {
+       Address = Address + 4;
+     }
+    else
+     {
+       /* Error occurred while writing data in Flash memory.
+          User can add here some code to deal with this error */
+
+     }
+     if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address, flashTime.alramHour) == HAL_OK)
+     {
+       Address = Address + 4;
+     }
+    else
+     {
+       /* Error occurred while writing data in Flash memory.
+          User can add here some code to deal with this error */
+
+   }
+     uint8_t velue1;
+     velue1 =  *((uint32_t *)0x08100000);
+
 
   /* Lock the Flash to disable the flash control register access (recommended
      to protect the FLASH memory against possible unwanted operation) *********/

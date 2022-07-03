@@ -1,20 +1,18 @@
-17:58:48 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
-make -j8 all 
+01:48:45 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+make -j4 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c:1037:17: warning: 'GetSectorSize' defined but not used [-Wunused-function]
- 1037 | static uint32_t GetSectorSize(uint32_t Sector)
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:267:28: error: 'FLASH_USER_END_ADDR' undeclared (first use in this function); did you mean 'FLASH_USER_START_ADDR'?
+  267 |    NbOfSectors = GetSector(FLASH_USER_END_ADDR) - FirstSector + 1;
+      |                            ^~~~~~~~~~~~~~~~~~~
+      |                            FLASH_USER_START_ADDR
+../Core/Src/main.c:267:28: note: each undeclared identifier is reported only once for each function it appears in
+At top level:
+../Core/Src/main.c:993:17: warning: 'GetSectorSize' defined but not used [-Wunused-function]
+  993 | static uint32_t GetSectorSize(uint32_t Sector) {
       |                 ^~~~~~~~~~~~~
-../Core/Src/main.c:933:17: warning: 'GetSector' defined but not used [-Wunused-function]
-  933 | static uint32_t GetSector(uint32_t Address)
-      |                 ^~~~~~~~~
-arm-none-eabi-gcc -o "22_06_10_Userbutton.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="22_06_10_Userbutton.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: 22_06_10_Userbutton.elf
- 
-arm-none-eabi-size   22_06_10_Userbutton.elf 
-arm-none-eabi-objdump -h -S  22_06_10_Userbutton.elf  > "22_06_10_Userbutton.list"
-   text	   data	    bss	    dec	    hex	filename
-  36424	    484	   2292	  39200	   9920	22_06_10_Userbutton.elf
-Finished building: default.size.stdout
- 
-Finished building: 22_06_10_Userbutton.list
- 
+make: *** [Core/Src/subdir.mk:52: Core/Src/main.o] Error 1
+"make -j4 all" terminated with exit code 2. Build might be incomplete.
+01:51:32 **** Building Selected Files of configuration Debug for project 22_06_10_Userbutton ****
+Info: Internal Builder is used for build
+arm-none-eabi-gcc "..\\Core\\Src\\main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core\\Src\\main.o" 

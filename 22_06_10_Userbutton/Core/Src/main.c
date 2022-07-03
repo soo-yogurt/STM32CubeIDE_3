@@ -43,8 +43,7 @@ typedef struct {
 	uint8_t s;
 } SETTIME;
 
-
-typedef struct FLAHTIME{
+typedef struct FLAHTIME {
 	uint8_t year;
 	uint8_t month;
 	uint8_t day;
@@ -67,11 +66,9 @@ FT flashTime;
 /* USER CODE BEGIN PD */
 
 // flash memory
-
 #define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_12
-#define DATA_32                 ((uint32_t)0x00000000)
 
-
+#define DATA_32                 ((uint32_t)0x00001111)
 
 //EXTI
 #define LONG_CLICK_MIN 700
@@ -158,26 +155,10 @@ uint8_t bell_length_2 = sizeof(bicycle_2) / sizeof(uint16_t);
 uint8_t bell_length_3 = sizeof(bicycle_3) / sizeof(uint16_t);
 uint8_t bell_length_4 = sizeof(bicycle_4) / sizeof(uint16_t);
 
-uint16_t underworld_melody[] = {
-C4, C5, A3, A4,
-AS3, AS4, M,
-M,
-C4, C5, A3, A4,
-AS3, AS4, M,
-M,
-F3, F4, D3, D4,
-DS3, DS4, M,
-M,
-F3, F4, D3, D4,
-DS3, DS4, M,
-M, DS4, CS4, D4,
-CS4, DS4,
-DS4, GS3,
-G3, CS4,
-C4, FS4, F4, E3, AS4, A4,
-GS4, DS4, B3,
-AS3, A3, GS3,
-M, M, M };
+uint16_t underworld_melody[] = { C4, C5, A3, A4, AS3, AS4, M, M,
+C4, C5, A3, A4, AS3, AS4, M, M, F3, F4, D3, D4, DS3, DS4, M, M,
+F3, F4, D3, D4, DS3, DS4, M, M, DS4, CS4, D4, CS4, DS4, DS4, GS3,
+G3, CS4, C4, FS4, F4, E3, AS4, A4, GS4, DS4, B3, AS3, A3, GS3, M, M, M };
 //Underwolrd tempo
 uint16_t underworld_tempo[] = { 12, 12, 12, 12, 12, 12, 6, 3, 12, 12, 12, 12,
 		12, 12, 6, 3, 12, 12, 12, 12, 12, 12, 6, 3, 12, 12, 12, 12, 12, 12, 6,
@@ -212,21 +193,14 @@ void SaveAlarm();
 void SaveSeting();
 void underworld();
 void BicycleSong();
-
-
-
-
-
+void SetUpflash();
 // flash memory ---------------------------------------------------
 static FLASH_EraseInitTypeDef EraseInitStruct;
 static uint32_t GetSector(uint32_t Address);
 uint32_t FirstSector = 0, NbOfSectors = 0;
 uint32_t Address = 0, SECTORError = 0;
-__IO uint32_t data32 = 0 , MemoryProgramStatus = 0;
+__IO uint32_t data32 = 0, MemoryProgramStatus = 0;
 static uint32_t GetSectorSize(uint32_t Sector);
-
-
-
 
 /* USER CODE END PFP */
 
@@ -280,48 +254,71 @@ int main(void) {
 	MX_NVIC_Init();
 	/* USER CODE BEGIN 2 */
 
-	 HAL_FLASH_Lock();
-
-	 if(*((uint32_t *)0x08100000) == 00000000)
-	 {
-		  if(HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK)
-		  {
-
-		  }
-
-		  flashTime.format = 0; // AM
-		  flashTime.hour = 12;
-		  flashTime.minutes = 0;
-		  flashTime.seconds = 0;
-		  flashTime.alramFormat = 0; // AM
-		  flashTime.alramHour = 12;
-		  flashTime.alramMinutes = 0;
-		  flashTime.alramSeconds = 0;
-		  if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address, DATA_32) == HAL_OK)
-		 {
-			  Address = Address + 4;
-		}
-	 }
-	 else
-	 {
-
-
-		 //저장된 데이터 읽어서 flashTime 구조체에 넣기
-		 //flag 0 번에서 flashTime 에 저장하고 플레시 메모리에 넣는 구조 만들기
-		 //flag 2 에서 알람 저장시 flashTime에 저장하고 플레시메모리에 넣는 구조 만들기
-		 // 플레시메모리 사용한 블로그 찾아보자
-
-
-	 }
-
-
-
-	HAL_FLASH_Unlock();
-
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	init();
 	HAL_TIM_Base_Init(&htim3);
 	HAL_TIM_Base_Start_IT(&htim3);
+
+	Address = ADDR_FLASH_SECTOR_12;
+	//((uint32_t)0x08100000);
+	HAL_FLASH_Lock();
+
+	  FirstSector = GetSector(FLASH_USER_START_ADDR);
+	  /* Get the number of sector to erase from 1st sector*/
+	  NbOfSectors = GetSector(FLASH_USER_END_ADDR) - FirstSector + 1;
+	  /* Fill EraseInit structure*/
+	  EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
+	  EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
+	  EraseInitStruct.Sector        = FirstSector;
+	  EraseInitStruct.NbSectors     = NbOfSectors;
+
+	if (*((uint32_t*) 0x08100000) == 0x00001111) {
+		flashTime.format = *((uint32_t*) 0x08100004);
+		flashTime.hour = *((uint32_t*) 0x08100008);
+		flashTime.minutes = *((uint32_t*) 0x0810000C);
+		flashTime.seconds = *((uint32_t*) 0x08100010);
+		flashTime.alramFormat = *((uint32_t*) 0x08100014);
+		flashTime.alramHour = *((uint32_t*) 0x08100018);
+		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
+		flashTime.alramSeconds = *((uint32_t*) 0x08100100);
+	} else {
+		if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK) {
+		    /*
+		      Error occurred while sector erase.
+		      User can add here some code to deal with this error.
+		      SECTORError will contain the faulty sector and then to know the code error on this sector,
+		      user can call function 'HAL_FLASH_GetError()'
+		    */
+		    /* Infinite loop */
+		}
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address, DATA_32);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 0x08100004, 0);
+		flashTime.format = *((uint32_t*) 0x08100004);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 0x08100008, 0x00000012);
+		flashTime.hour = *((uint32_t*) 0x08100008);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810000C), 0);
+		flashTime.minutes = *((uint32_t*) 0x0810000C);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100010), 0);
+		flashTime.seconds = *((uint32_t*) 0x08100010);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100014), 0);
+		flashTime.alramFormat = *((uint32_t*) 0x08100014);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018), 0x00000012);
+		flashTime.alramHour = *((uint32_t*) 0x08100018);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C), 0);
+		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100100), 0);
+		flashTime.alramSeconds = *((uint32_t*) 0x08100100);
+	}
+
+	HAL_FLASH_Unlock();
 
 	at.f = flashTime.alramFormat;
 	at.h = flashTime.alramHour;
@@ -340,12 +337,6 @@ int main(void) {
 	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 	memset(buf, 0, sizeof(buf));
-
-
-
-
-
-
 
 	/* USER CODE END 2 */
 
@@ -377,13 +368,10 @@ int main(void) {
 				LCD_SendCommand(LCD_ADDR, 0b11000000);
 				LCD_SendString(LCD_ADDR, buf);
 				//**********************************************************************
-				  HAL_FLASH_Unlock();
-
-
-
-				  HAL_FLASH_Lock();
+				SetUpflash();
 
 				//**********************************************************************
+				// 알람이 울릴 때 longClick 으로 종료할 수 있따.
 				if (alarmMode == 0) {
 					if (at.f == sTime.TimeFormat) {
 						if (at.h == sTime.Hours && at.m == sTime.Minutes
@@ -923,138 +911,139 @@ void underworld() {
 	}
 }
 
-
-
-
-
 //********************************************************** flash
 
+static uint32_t GetSector(uint32_t Address) {
+	uint32_t sector = 0;
 
-static uint32_t GetSector(uint32_t Address)
-{
-  uint32_t sector = 0;
-
-  if((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
-  {
-    sector = FLASH_SECTOR_0;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_2) && (Address >= ADDR_FLASH_SECTOR_1))
-  {
-    sector = FLASH_SECTOR_1;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_3) && (Address >= ADDR_FLASH_SECTOR_2))
-  {
-    sector = FLASH_SECTOR_2;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_4) && (Address >= ADDR_FLASH_SECTOR_3))
-  {
-    sector = FLASH_SECTOR_3;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_5) && (Address >= ADDR_FLASH_SECTOR_4))
-  {
-    sector = FLASH_SECTOR_4;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_6) && (Address >= ADDR_FLASH_SECTOR_5))
-  {
-    sector = FLASH_SECTOR_5;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_7) && (Address >= ADDR_FLASH_SECTOR_6))
-  {
-    sector = FLASH_SECTOR_6;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_8) && (Address >= ADDR_FLASH_SECTOR_7))
-  {
-    sector = FLASH_SECTOR_7;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
-  {
-    sector = FLASH_SECTOR_8;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_10) && (Address >= ADDR_FLASH_SECTOR_9))
-  {
-    sector = FLASH_SECTOR_9;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_11) && (Address >= ADDR_FLASH_SECTOR_10))
-  {
-    sector = FLASH_SECTOR_10;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_12) && (Address >= ADDR_FLASH_SECTOR_11))
-  {
-    sector = FLASH_SECTOR_11;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_13) && (Address >= ADDR_FLASH_SECTOR_12))
-  {
-    sector = FLASH_SECTOR_12;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_14) && (Address >= ADDR_FLASH_SECTOR_13))
-  {
-    sector = FLASH_SECTOR_13;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_15) && (Address >= ADDR_FLASH_SECTOR_14))
-  {
-    sector = FLASH_SECTOR_14;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_16) && (Address >= ADDR_FLASH_SECTOR_15))
-  {
-    sector = FLASH_SECTOR_15;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_17) && (Address >= ADDR_FLASH_SECTOR_16))
-  {
-    sector = FLASH_SECTOR_16;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_18) && (Address >= ADDR_FLASH_SECTOR_17))
-  {
-    sector = FLASH_SECTOR_17;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_19) && (Address >= ADDR_FLASH_SECTOR_18))
-  {
-    sector = FLASH_SECTOR_18;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_20) && (Address >= ADDR_FLASH_SECTOR_19))
-  {
-    sector = FLASH_SECTOR_19;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_21) && (Address >= ADDR_FLASH_SECTOR_20))
-  {
-    sector = FLASH_SECTOR_20;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_22) && (Address >= ADDR_FLASH_SECTOR_21))
-  {
-    sector = FLASH_SECTOR_21;
-  }
-  else if((Address < ADDR_FLASH_SECTOR_23) && (Address >= ADDR_FLASH_SECTOR_22))
-  {
-    sector = FLASH_SECTOR_22;
-  }
-  else /* (Address < FLASH_END_ADDR) && (Address >= ADDR_FLASH_SECTOR_23) */
-  {
-    sector = FLASH_SECTOR_23;
-  }
-  return sector;
+	if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0)) {
+		sector = FLASH_SECTOR_0;
+	} else if ((Address < ADDR_FLASH_SECTOR_2)
+			&& (Address >= ADDR_FLASH_SECTOR_1)) {
+		sector = FLASH_SECTOR_1;
+	} else if ((Address < ADDR_FLASH_SECTOR_3)
+			&& (Address >= ADDR_FLASH_SECTOR_2)) {
+		sector = FLASH_SECTOR_2;
+	} else if ((Address < ADDR_FLASH_SECTOR_4)
+			&& (Address >= ADDR_FLASH_SECTOR_3)) {
+		sector = FLASH_SECTOR_3;
+	} else if ((Address < ADDR_FLASH_SECTOR_5)
+			&& (Address >= ADDR_FLASH_SECTOR_4)) {
+		sector = FLASH_SECTOR_4;
+	} else if ((Address < ADDR_FLASH_SECTOR_6)
+			&& (Address >= ADDR_FLASH_SECTOR_5)) {
+		sector = FLASH_SECTOR_5;
+	} else if ((Address < ADDR_FLASH_SECTOR_7)
+			&& (Address >= ADDR_FLASH_SECTOR_6)) {
+		sector = FLASH_SECTOR_6;
+	} else if ((Address < ADDR_FLASH_SECTOR_8)
+			&& (Address >= ADDR_FLASH_SECTOR_7)) {
+		sector = FLASH_SECTOR_7;
+	} else if ((Address < ADDR_FLASH_SECTOR_9)
+			&& (Address >= ADDR_FLASH_SECTOR_8)) {
+		sector = FLASH_SECTOR_8;
+	} else if ((Address < ADDR_FLASH_SECTOR_10)
+			&& (Address >= ADDR_FLASH_SECTOR_9)) {
+		sector = FLASH_SECTOR_9;
+	} else if ((Address < ADDR_FLASH_SECTOR_11)
+			&& (Address >= ADDR_FLASH_SECTOR_10)) {
+		sector = FLASH_SECTOR_10;
+	} else if ((Address < ADDR_FLASH_SECTOR_12)
+			&& (Address >= ADDR_FLASH_SECTOR_11)) {
+		sector = FLASH_SECTOR_11;
+	} else if ((Address < ADDR_FLASH_SECTOR_13)
+			&& (Address >= ADDR_FLASH_SECTOR_12)) {
+		sector = FLASH_SECTOR_12;
+	} else if ((Address < ADDR_FLASH_SECTOR_14)
+			&& (Address >= ADDR_FLASH_SECTOR_13)) {
+		sector = FLASH_SECTOR_13;
+	} else if ((Address < ADDR_FLASH_SECTOR_15)
+			&& (Address >= ADDR_FLASH_SECTOR_14)) {
+		sector = FLASH_SECTOR_14;
+	} else if ((Address < ADDR_FLASH_SECTOR_16)
+			&& (Address >= ADDR_FLASH_SECTOR_15)) {
+		sector = FLASH_SECTOR_15;
+	} else if ((Address < ADDR_FLASH_SECTOR_17)
+			&& (Address >= ADDR_FLASH_SECTOR_16)) {
+		sector = FLASH_SECTOR_16;
+	} else if ((Address < ADDR_FLASH_SECTOR_18)
+			&& (Address >= ADDR_FLASH_SECTOR_17)) {
+		sector = FLASH_SECTOR_17;
+	} else if ((Address < ADDR_FLASH_SECTOR_19)
+			&& (Address >= ADDR_FLASH_SECTOR_18)) {
+		sector = FLASH_SECTOR_18;
+	} else if ((Address < ADDR_FLASH_SECTOR_20)
+			&& (Address >= ADDR_FLASH_SECTOR_19)) {
+		sector = FLASH_SECTOR_19;
+	} else if ((Address < ADDR_FLASH_SECTOR_21)
+			&& (Address >= ADDR_FLASH_SECTOR_20)) {
+		sector = FLASH_SECTOR_20;
+	} else if ((Address < ADDR_FLASH_SECTOR_22)
+			&& (Address >= ADDR_FLASH_SECTOR_21)) {
+		sector = FLASH_SECTOR_21;
+	} else if ((Address < ADDR_FLASH_SECTOR_23)
+			&& (Address >= ADDR_FLASH_SECTOR_22)) {
+		sector = FLASH_SECTOR_22;
+	} else /* (Address < FLASH_END_ADDR) && (Address >= ADDR_FLASH_SECTOR_23) */
+	{
+		sector = FLASH_SECTOR_23;
+	}
+	return sector;
 }
 
-
-static uint32_t GetSectorSize(uint32_t Sector)
-{
-  uint32_t sectorsize = 0x00;
-  if((Sector == FLASH_SECTOR_0) || (Sector == FLASH_SECTOR_1) || (Sector == FLASH_SECTOR_2) ||\
-     (Sector == FLASH_SECTOR_3) || (Sector == FLASH_SECTOR_12) || (Sector == FLASH_SECTOR_13) ||\
-     (Sector == FLASH_SECTOR_14) || (Sector == FLASH_SECTOR_15))
-  {
-    sectorsize = 16 * 1024;
-  }
-  else if((Sector == FLASH_SECTOR_4) || (Sector == FLASH_SECTOR_16))
-  {
-    sectorsize = 64 * 1024;
-  }
-  else
-  {
-    sectorsize = 128 * 1024;
-  }
-  return sectorsize;
+static uint32_t GetSectorSize(uint32_t Sector) {
+	uint32_t sectorsize = 0x00;
+	if ((Sector == FLASH_SECTOR_0) || (Sector == FLASH_SECTOR_1)
+			|| (Sector == FLASH_SECTOR_2) || (Sector == FLASH_SECTOR_3)
+			|| (Sector == FLASH_SECTOR_12) || (Sector == FLASH_SECTOR_13)
+			|| (Sector == FLASH_SECTOR_14) || (Sector == FLASH_SECTOR_15)) {
+		sectorsize = 16 * 1024;
+	} else if ((Sector == FLASH_SECTOR_4) || (Sector == FLASH_SECTOR_16)) {
+		sectorsize = 64 * 1024;
+	} else {
+		sectorsize = 128 * 1024;
+	}
+	return sectorsize;
 }
+void SetUpflash() {
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	flashTime.format = sTime.TimeFormat;
+	flashTime.hour = sTime.Hours;
+	flashTime.minutes = sTime.Minutes;
+	flashTime.seconds = sTime.Seconds;
+	flashTime.alramFormat = at.f;
+	flashTime.alramHour = at.h;
+	flashTime.alramMinutes = at.m;
+	flashTime.alramSeconds = at.s;
 
+	HAL_FLASH_Lock();
 
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100004),
+			flashTime.format);
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100008),
+			flashTime.hour);
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810000C),
+			flashTime.minutes);
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100010),
+			flashTime.seconds);
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100014),
+			flashTime.alramFormat);
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018),
+			flashTime.alramHour);
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C),
+			flashTime.alramMinutes);
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100100),
+			flashTime.alramSeconds);
+	HAL_FLASH_Unlock();
+}
 
 /* USER CODE END 4 */
 

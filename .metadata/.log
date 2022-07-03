@@ -8447,3 +8447,356 @@ Binding(CTRL+G,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.debug.ui.memory.abstractasynctablerendering,,,system)
+!SESSION 2022-07-03 21:04:43.448 -----------------------------------------------
+eclipse.buildId=Version 1.9.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ko_KR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-07-03 21:17:38.531
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-07-03 21:17:38.689
+!MESSAGE Log4j initialized with config file C:\workspace_stm32\STM32CubeIDE_3\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-07-03 21:17:58.203
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-03 23:55:05.414
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeMemConfig(BuildDataProviderMap.java:392)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:80)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-03 23:55:06.557
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeLinkerSymbols(BuildDataProviderMap.java:400)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:102)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-03 23:55:06.974
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:04:35.959
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:04:48.227
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:04:49.137
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeMemConfig(BuildDataProviderMap.java:392)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:80)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:04:50.237
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeLinkerSymbols(BuildDataProviderMap.java:400)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:102)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:04:51.108
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:04:53.862
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:04:54.761
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeMemConfig(BuildDataProviderMap.java:392)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:80)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:04:55.854
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeLinkerSymbols(BuildDataProviderMap.java:400)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:102)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:05:09.064
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:05:15.933
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:05:16.858
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeMemConfig(BuildDataProviderMap.java:392)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:80)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:05:17.963
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeLinkerSymbols(BuildDataProviderMap.java:400)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:102)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:05:49.849
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:06:00.558
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:06:01.423
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeMemConfig(BuildDataProviderMap.java:392)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:80)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2022-07-04 00:06:02.660
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: C:\workspace_stm32\STM32CubeIDE_3\workspace_flashmemory\Debug\workspace_flashmemory.map (지정된 파일을 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeLinkerSymbols(BuildDataProviderMap.java:400)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:102)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:252)
+	at elf_analyzer.ElfAnalyzerView.lambda$3(ElfAnalyzerView.java:403)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:30:08.034
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:40:35.052
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:40:49.889
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:41:26.520
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:46:22.965
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-04 00:50:52.507
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$14(StackAnalyzerView.java:1211)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 4 2022-07-04 01:28:24.591
+!MESSAGE NullPointerException while trying to calculated source lookup path. This can be ignored if it occurs while terminating a debug session. See Bug 500988.
+!STACK 0
+java.lang.NullPointerException
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.collectSubstitutionsPaths(GdbSourceLookupDirector.java:102)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.collectSubstitutionsPaths(GdbSourceLookupDirector.java:146)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.getSubstitutionsPaths(GdbSourceLookupDirector.java:72)
+	at org.eclipse.cdt.dsf.gdb.service.GDBSourceLookup.getSubstitutionsPaths(GDBSourceLookup.java:124)
+	at org.eclipse.cdt.dsf.gdb.service.GDBSourceLookup.sourceContainersChanged(GDBSourceLookup.java:139)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupParticipant.sourceContainersChangedOnDispatchThread(GdbSourceLookupParticipant.java:120)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupParticipant$1.run(GdbSourceLookupParticipant.java:85)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
