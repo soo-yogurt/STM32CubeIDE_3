@@ -34,10 +34,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_3   /* Start @ of user Flash area */
+#define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_12   /* Start @ of user Flash area */
 #define FLASH_USER_END_ADDR     ADDR_FLASH_SECTOR_23  +  GetSectorSize(ADDR_FLASH_SECTOR_23) - 1 /* End @ of user Flash area : sector start address + sector size -1 */
 
-#define DATA_32                 ((uint32_t)0x12345678)
+#define DATA_32                 ((uint32_t)0x12300078)
 
 /* USER CODE END PD */
 

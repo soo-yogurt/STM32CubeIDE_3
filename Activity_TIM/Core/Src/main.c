@@ -50,6 +50,27 @@
 #define A_ 536
 #define M 0 // mute
 
+#define VOLUME 300
+
+#define C4 1911
+#define C5 956
+#define A3 2272
+#define AS3 2241
+#define A4 1136 // 솔
+#define AS4 1272
+#define F3 2863
+#define F4 1431
+#define D3 3405
+#define D4 1702
+#define DS3 3214
+#define DS4 1607
+#define CS4 1803
+#define GS3 2408
+#define G3 2551
+#define E3 3034
+#define FS4 1351
+#define B3 2024
+#define GS4 1204
 // 375
 // 4 >> 250
 // 8 >> 125
@@ -78,6 +99,52 @@ uint8_t bell_length_4 = sizeof(bicycle_4)/sizeof(uint16_t);
 //uint8_t interval[] = {125, 125, 250, 250, 125, 125, 250, 250 , 125, 125, 125, 125, 375}
 
 
+
+uint16_t underworld_melody[] = {
+  C4, C5, A3, A4,
+  AS3, AS4, M,
+  M,
+  C4, C5, A3, A4,
+  AS3, AS4, M,
+  M,
+  F3, F4, D3, D4,
+  DS3, DS4, M,
+  M,
+  F3, F4, D3, D4,
+  DS3, DS4, M,
+  M, DS4, CS4, D4,
+  CS4, DS4,
+  DS4, GS3,
+  G3, CS4,
+  C4, FS4, F4, E3, AS4, A4,
+  GS4, DS4, B3,
+  AS3, A3, GS3,
+  M, M, M
+};
+	//Underwolrd tempo
+uint16_t underworld_tempo[] = {
+	  12, 12, 12, 12,
+	  12, 12, 6,
+	  3,
+	  12, 12, 12, 12,
+	  12, 12, 6,
+	  3,
+	  12, 12, 12, 12,
+	  12, 12, 6,
+	  3,
+	  12, 12, 12, 12,
+	  12, 12, 6,
+	  6, 18, 18, 18,
+	  6, 6,
+	  6, 6,
+	  6, 6,
+	  18, 18, 18, 18, 18, 18,
+	  10, 10, 10,
+	  10, 10, 10,
+	  3, 3, 3
+};
+
+uint8_t underworld_length =  sizeof(underworld_melody) / sizeof(uint16_t);
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -148,7 +215,7 @@ int main(void)
   while (1)
   {
 
-	 for(int i = 0; i < bell_length; i++){
+/*	 for(int i = 0; i < bell_length; i++){
 		  TIM2 -> ARR = bicycle[i];
 		  TIM2 -> CCR1 = set_CCR;
 		  HAL_Delay(interval[i]);
@@ -175,7 +242,14 @@ int main(void)
 		  HAL_Delay(interval_4[i]);
 		  TIM2 -> CCR1 = 0;
 		  HAL_Delay(mute_4[i]);
-	  }
+	  }*/
+	  	 for(int i = 0; i < underworld_length; i++){
+	  		  TIM2 -> ARR = underworld_melody[i];
+	  		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
+	  		  HAL_Delay(1500/underworld_tempo[i]);
+	  		  //TIM2 -> CCR1 = 0;
+	  		  //HAL_Delay(mute[i]);
+	  	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

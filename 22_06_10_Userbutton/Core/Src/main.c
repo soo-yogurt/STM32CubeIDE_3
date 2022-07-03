@@ -27,10 +27,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stdio.h"
-#include "stdint.h"
-#include "string.h"
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,20 +36,43 @@ typedef struct {
 	uint8_t level;
 } ClickInfoDef;
 
-
-
 typedef struct {
 	uint8_t f;
 	uint8_t h;
 	uint8_t m;
 	uint8_t s;
-}SETTIME;
+} SETTIME;
 
+
+typedef struct FLAHTIME{
+	uint8_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t format;
+	uint8_t hour;
+	uint8_t minutes;
+	uint8_t seconds;
+	uint8_t alramFormat;
+	uint8_t alramHour;
+	uint8_t alramMinutes;
+	uint8_t alramSeconds;
+
+} FT;
+
+FT flashTime;
 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+// flash memory
+
+#define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_12
+#define DATA_32                 ((uint32_t)0x00000000)
+
+
+
 //EXTI
 #define LONG_CLICK_MIN 700
 #define LONG_CLICK_MAX 5000
@@ -77,21 +96,6 @@ typedef struct {
 #define BACKLIGHT (1 << 3)
 
 #define LCD_DELAY_MS 5
-
-
-
-#define C 956 // 도
-#define D 852
-#define E 758
-#define F 716
-#define G 638 // 솔
-#define A 568
-#define B 506
-#define C_ 902 // C#
-#define D_ 804
-#define F_ 676
-#define A_ 536
-#define M 0 // mute
 
 // 숫자가 클수록 소리가 작아진다.
 #define VOLUME 300
@@ -126,30 +130,61 @@ char alarmSet[2][4] = { "ON ", "OFF" };
 SETTIME st;
 SETTIME at;
 
+uint16_t bicycle[] = { E, G, G, M, E, G, G, M, A, A, A, A, A, M }; //, G, G, M, A, A, A, A, A};
+uint16_t interval[] = { 125, 125, 250, 250, 125, 125, 250, 0, 125, 125, 125,
+		125, 375, 625 };
+uint16_t mute[] = { 125, 125, 0, 0, 125, 125, 0, 0, 125, 125, 125, 125, 125, 0 };
 
+uint16_t bicycle_2[] = { G, G, G, G, F, F, F, F, E, E, E, E, E, M };
+uint16_t interval_2[] = { 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125,
+		125, 375, 625 };
+uint16_t mute_2[] = { 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125,
+		125, 125, 0 };
 
-uint16_t bicycle[] = {E, G, G, M, E, G, G, M, A, A, A, A, A, M}; //, G, G, M, A, A, A, A, A};
-uint16_t interval[] = {125, 125, 250, 250, 125, 125, 250, 0, 125, 125, 125, 125, 375, 625};
-uint16_t mute[] =    {125, 125, 0, 0, 125, 125, 0, 0, 125, 125, 125, 125, 125, 0};
+uint16_t bicycle_3[] = { E, G, G, G, E, G, G, M, A, A, E, E, G, M };
+uint16_t interval_3[] = { 125, 125, 125, 125, 125, 125, 250, 250, 200, 75, 125,
+		125, 375, 625 };
+uint16_t mute_3[] = { 125, 125, 125, 125, 125, 125, 0, 0, 125, 50, 75, 125, 125,
+		125, 0 };
 
-uint16_t bicycle_2[] = {G, G, G, G, F, F, F, F, E, E, E, E, E, M};
-uint16_t interval_2[] = {125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 375, 625};
-uint16_t mute_2[] = {125, 125, 125 ,125, 125, 125, 125 ,125, 125, 125, 125 ,125, 125, 0};
+uint16_t bicycle_4[] = { F, F, F, F, E, E, E, E, D, D, G, G, C, M };
+uint16_t interval_4[] = { 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125,
+		125, 375, 625 };
+uint16_t mute_4[] = { 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125,
+		125, 125, 0 };
 
-uint16_t bicycle_3[] = {E, G, G, G, E, G, G, M, A, A, E, E, G, M};
-uint16_t interval_3[] = {125, 125, 125, 125, 125, 125, 250, 250, 200, 75, 125, 125, 375, 625};
-uint16_t mute_3[] = {125, 125, 125 ,125, 125, 125 ,0, 0, 125, 50, 75, 125, 125, 125, 0};
+uint8_t bell_length = sizeof(bicycle) / sizeof(uint16_t);
+uint8_t bell_length_2 = sizeof(bicycle_2) / sizeof(uint16_t);
+uint8_t bell_length_3 = sizeof(bicycle_3) / sizeof(uint16_t);
+uint8_t bell_length_4 = sizeof(bicycle_4) / sizeof(uint16_t);
 
+uint16_t underworld_melody[] = {
+C4, C5, A3, A4,
+AS3, AS4, M,
+M,
+C4, C5, A3, A4,
+AS3, AS4, M,
+M,
+F3, F4, D3, D4,
+DS3, DS4, M,
+M,
+F3, F4, D3, D4,
+DS3, DS4, M,
+M, DS4, CS4, D4,
+CS4, DS4,
+DS4, GS3,
+G3, CS4,
+C4, FS4, F4, E3, AS4, A4,
+GS4, DS4, B3,
+AS3, A3, GS3,
+M, M, M };
+//Underwolrd tempo
+uint16_t underworld_tempo[] = { 12, 12, 12, 12, 12, 12, 6, 3, 12, 12, 12, 12,
+		12, 12, 6, 3, 12, 12, 12, 12, 12, 12, 6, 3, 12, 12, 12, 12, 12, 12, 6,
+		6, 18, 18, 18, 6, 6, 6, 6, 6, 6, 18, 18, 18, 18, 18, 18, 10, 10, 10, 10,
+		10, 10, 3, 3, 3 };
 
-uint16_t bicycle_4[] = {F, F, F, F, E, E, E, E, D, D, G, G, C, M};
-uint16_t interval_4[] = {125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 375, 625};
-uint16_t mute_4[] = {125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 0};
-
-uint8_t bell_length = sizeof(bicycle)/sizeof(uint16_t);
-uint8_t bell_length_2 = sizeof(bicycle_2)/sizeof(uint16_t);
-uint8_t bell_length_3 = sizeof(bicycle_3)/sizeof(uint16_t);
-uint8_t bell_length_4 = sizeof(bicycle_4)/sizeof(uint16_t);
-
+uint8_t underworld_length = sizeof(underworld_melody) / sizeof(uint16_t);
 
 /* USER CODE END PV */
 
@@ -175,8 +210,24 @@ void bufferState();
 void SetTimeUp(const int *location);
 void SaveAlarm();
 void SaveSeting();
-
+void underworld();
 void BicycleSong();
+
+
+
+
+
+// flash memory ---------------------------------------------------
+static FLASH_EraseInitTypeDef EraseInitStruct;
+static uint32_t GetSector(uint32_t Address);
+uint32_t FirstSector = 0, NbOfSectors = 0;
+uint32_t Address = 0, SECTORError = 0;
+__IO uint32_t data32 = 0 , MemoryProgramStatus = 0;
+static uint32_t GetSectorSize(uint32_t Sector);
+
+
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -188,64 +239,99 @@ int __io_putchar(int ch) {
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
-  /* USER CODE BEGIN 1 */
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
+	/* USER CODE BEGIN 1 */
 
 	int location = 0;
 	uint8_t adc_point = 0;
 
-  /* USER CODE END 1 */
+	/* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+	/* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+	/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+	/* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_RTC_Init();
-  MX_USART3_UART_Init();
-  MX_TIM3_Init();
-  MX_ADC1_Init();
-  MX_USART2_UART_Init();
-  MX_I2C1_Init();
-  MX_TIM2_Init();
+	/* Initialize all configured peripherals */
+	MX_GPIO_Init();
+	MX_RTC_Init();
+	MX_USART3_UART_Init();
+	MX_TIM3_Init();
+	MX_ADC1_Init();
+	MX_USART2_UART_Init();
+	MX_I2C1_Init();
+	MX_TIM2_Init();
 
-  /* Initialize interrupts */
-  MX_NVIC_Init();
-  /* USER CODE BEGIN 2 */
+	/* Initialize interrupts */
+	MX_NVIC_Init();
+	/* USER CODE BEGIN 2 */
+
+	 HAL_FLASH_Lock();
+
+	 if(*((uint32_t *)0x08100000) == 00000000)
+	 {
+		  if(HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK)
+		  {
+
+		  }
+
+		  flashTime.format = 0; // AM
+		  flashTime.hour = 12;
+		  flashTime.minutes = 0;
+		  flashTime.seconds = 0;
+		  flashTime.alramFormat = 0; // AM
+		  flashTime.alramHour = 12;
+		  flashTime.alramMinutes = 0;
+		  flashTime.alramSeconds = 0;
+		  if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address, DATA_32) == HAL_OK)
+		 {
+			  Address = Address + 4;
+		}
+	 }
+	 else
+	 {
 
 
-   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+		 //저장된 데이터 읽어서 flashTime 구조체에 넣기
+		 //flag 0 번에서 flashTime 에 저장하고 플레시 메모리에 넣는 구조 만들기
+		 //flag 2 에서 알람 저장시 flashTime에 저장하고 플레시메모리에 넣는 구조 만들기
+		 // 플레시메모리 사용한 블로그 찾아보자
+
+
+	 }
+
+
+
+	HAL_FLASH_Unlock();
+
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	init();
 	HAL_TIM_Base_Init(&htim3);
 	HAL_TIM_Base_Start_IT(&htim3);
 
-	at.f = 0;
-	at.h = 12;
-	at.m = 30;
-	at.s = 30;
+	at.f = flashTime.alramFormat;
+	at.h = flashTime.alramHour;
+	at.m = flashTime.alramMinutes;
+	at.s = flashTime.alramSeconds;
 
-
-	sTime.Hours = 12;
-	sTime.Minutes = 0;
-	sTime.Seconds = 0;
-	sTime.TimeFormat = 0;
+	sTime.Hours = flashTime.hour;
+	sTime.Minutes = flashTime.minutes;
+	sTime.Seconds = flashTime.seconds;
+	sTime.TimeFormat = flashTime.format;
 
 	sDate.Year = 22;
 	sDate.Month = 6;
@@ -254,15 +340,22 @@ int main(void)
 	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 	memset(buf, 0, sizeof(buf));
-  /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+
+
+
+
+
+
+	/* USER CODE END 2 */
+
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
 	while (1) {
-    /* USER CODE END WHILE */
+		/* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
-		char alarmOnOff[2][2] = {"A", " "};
+		/* USER CODE BEGIN 3 */
+		char alarmOnOff[2][2] = { "A", " " };
 		char flag1buf[25];
 		//clock
 		if (flag == 0) {
@@ -283,7 +376,32 @@ int main(void)
 				printf("\r\n");
 				LCD_SendCommand(LCD_ADDR, 0b11000000);
 				LCD_SendString(LCD_ADDR, buf);
-			//**********************************************************************
+				//**********************************************************************
+				  HAL_FLASH_Unlock();
+
+
+
+				  HAL_FLASH_Lock();
+
+				//**********************************************************************
+				if (alarmMode == 0) {
+					if (at.f == sTime.TimeFormat) {
+						if (at.h == sTime.Hours && at.m == sTime.Minutes
+								&& at.s == sTime.Seconds) {
+							alarmMode = 1;
+							while (longClick == 0) {
+								BicycleSong();
+							}
+							longClick = 0;
+							sprintf(flag1buf, " %s   LCD Clock  ",
+									alarmOnOff[alarmMode]);
+							LCD_SendCommand(LCD_ADDR, 0b10000000);
+							LCD_SendString(LCD_ADDR, flag1buf);
+						}
+					}
+				}
+
+				//**********************************************************************
 			}
 		}
 		//set Time
@@ -294,7 +412,7 @@ int main(void)
 			LCD_SendString(LCD_ADDR, flag1buf);
 			//********************* Display ** LINE 2 ******************************
 			sprintf(buf, "%s %02d:%02d:%02d     ", ampm[sTime.TimeFormat],
-									sTime.Hours, sTime.Minutes, sTime.Seconds);
+					sTime.Hours, sTime.Minutes, sTime.Seconds);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
 			LCD_SendString(LCD_ADDR, buf);
 			//********************** cursor ****************************************
@@ -320,8 +438,8 @@ int main(void)
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
 			LCD_SendString(LCD_ADDR, flag1buf);
 			//********************* Display ** LINE 2 ******************************
-			sprintf(buf2, "%s %02d:%02d:%02d %s ", ampm[at.f],
-									at.h, at.m, at.s, alarmSet[alarmMode]);
+			sprintf(buf2, "%s %02d:%02d:%02d %s ", ampm[at.f], at.h, at.m, at.s,
+					alarmSet[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
 			LCD_SendString(LCD_ADDR, buf2);
 			//********************** cursor ****************************************
@@ -342,75 +460,71 @@ int main(void)
 		} else if (flag > 2)
 			flag = 0;
 	}
-  /* USER CODE END 3 */
+	/* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
-  /** Configure the main internal regulator output voltage
-  */
-  __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+	/** Configure the main internal regulator output voltage
+	 */
+	__HAL_RCC_PWR_CLK_ENABLE();
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSE;
-  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 180;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	/** Initializes the RCC Oscillators according to the specified parameters
+	 * in the RCC_OscInitTypeDef structure.
+	 */
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI
+			| RCC_OSCILLATORTYPE_LSE;
+	RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+	RCC_OscInitStruct.PLL.PLLM = 8;
+	RCC_OscInitStruct.PLL.PLLN = 180;
+	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+	RCC_OscInitStruct.PLL.PLLQ = 4;
+	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+		Error_Handler();
+	}
 
-  /** Activate the Over-Drive mode
-  */
-  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
-  {
-    Error_Handler();
-  }
+	/** Activate the Over-Drive mode
+	 */
+	if (HAL_PWREx_EnableOverDrive() != HAL_OK) {
+		Error_Handler();
+	}
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+	/** Initializes the CPU, AHB and APB buses clocks
+	 */
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) {
+		Error_Handler();
+	}
 }
 
 /**
-  * @brief NVIC Configuration.
-  * @retval None
-  */
-static void MX_NVIC_Init(void)
-{
-  /* USART3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(USART3_IRQn);
-  /* EXTI15_10_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+ * @brief NVIC Configuration.
+ * @retval None
+ */
+static void MX_NVIC_Init(void) {
+	/* USART3_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(USART3_IRQn);
+	/* EXTI15_10_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
 /* USER CODE BEGIN 4 */
@@ -542,26 +656,23 @@ void init() {
 void loop() {
 	HAL_Delay(100);
 }
-void SaveAlarm()
-{
+void SaveAlarm() {
 	/***************** Save 기능 **************************/
-	if(longClick == 1)
-	{
+	if (longClick == 1) {
 		at.f = st.f;
 		at.h = st.h;
 		at.m = st.m;
 		at.s = st.s;
 		longClick = 0;
 		flag = 0;
+		alarmMode ^= 1;
 	}
 }
 
-void SaveSeting()
-{
+void SaveSeting() {
 
 	/***************** Save 기능 **************************/
-	if(longClick == 1)
-	{
+	if (longClick == 1) {
 		sTime.TimeFormat = st.f;
 		sTime.Hours = st.h;
 		sTime.Minutes = st.m;
@@ -574,39 +685,34 @@ void SaveSeting()
 		flag = 0;
 	}
 }
-void SetTimeDown(const int *location)
-{
-	if(*location == 0){
-		if(st.f == 0)
+void SetTimeDown(const int *location) {
+	if (*location == 0) {
+		if (st.f == 0)
 			st.f = 1;
-		else if(st.f == 1)
+		else if (st.f == 1)
 			st.f = 0;
-	}
-	else if(*location == 4){
-		if(st.h == 0)
+	} else if (*location == 4) {
+		if (st.h == 0)
 			st.h = 12;
 		else
 			st.h -= 1;
-	}
-	else if(*location == 6){
-		if(st.m < 10)
+	} else if (*location == 6) {
+		if (st.m < 10)
 			st.m += 50;
 		else
 			st.m -= 10;
-	}
-	else if(*location == 7){
-		if(st.m % 10 == 0)
+	} else if (*location == 7) {
+		if (st.m % 10 == 0)
 			st.m += 9;
 		else
 			st.m--;
-	}
-	else if(*location == 9){
-		if(st.s < 10)
+	} else if (*location == 9) {
+		if (st.s < 10)
 			st.s += 50;
 		else
-			st.s -=10;
-	}else if(*location == 10){
-		if(st.s % 10 == 0)
+			st.s -= 10;
+	} else if (*location == 10) {
+		if (st.s % 10 == 0)
 			st.s += 9;
 		else
 			st.s--;
@@ -614,92 +720,86 @@ void SetTimeDown(const int *location)
 		alarmMode ^= 1;
 
 	char format[3];
-	if(st.f == 0)
+	if (st.f == 0)
 		strcpy(format, "AM");
-	else if(st.f == 1)
+	else if (st.f == 1)
 		strcpy(format, "PM");
 	/****************** Display *************************************/
-	if(flag == 1)
+	if (flag == 1)
 		sprintf(temp, "%s %02d:%02d:%02d     ", format, st.h, st.m, st.s);
-	else if(flag == 2)
-		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s, alarmSet[alarmMode]);
+	else if (flag == 2)
+		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s,
+				alarmSet[alarmMode]);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, temp);
 
-
 	/***************** SetTime 후 커서 되돌리기 **************************/
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
-	for(int j = 0; j < *location; j++)
-	{
+	for (int j = 0; j < *location; j++) {
 		LCD_SendCommand(LCD_ADDR, 0b00010100);
 	}
 
 }
 
-void SetTimeUp(const int *location)
-{
-	if(*location == 3) {}
-	else if(*location == 4){
-		if(st.h == 12)
+void SetTimeUp(const int *location) {
+	if (*location == 3) {
+	} else if (*location == 4) {
+		if (st.h == 12)
 			st.h = 0;
 		else
 			st.h += 1;
-	} else if(*location == 0){
-		if(st.f == 0)
+	} else if (*location == 0) {
+		if (st.f == 0)
 			st.f = 1;
-		else if(st.f == 1)
+		else if (st.f == 1)
 			st.f = 0;
-	}
-	else if(*location == 6){
-		if(st.m >= 50)
+	} else if (*location == 6) {
+		if (st.m >= 50)
 			st.m -= 50;
-		else if(st.m < 50) {
+		else if (st.m < 50) {
 			st.m += 10;
 		}
-	} else if (*location == 7){
-		if(st.m % 10 == 9)
+	} else if (*location == 7) {
+		if (st.m % 10 == 9)
 			st.m -= 9;
 		else
 			st.m++;
-	} else if (*location == 9){
-		if(st.s >= 50)
-			st.s -=50;
-		else if(st.s < 50)
-			st.s +=10;
-	} else if (*location == 10){
-		if(st.s % 10 == 9)
-			st.s -=9;
+	} else if (*location == 9) {
+		if (st.s >= 50)
+			st.s -= 50;
+		else if (st.s < 50)
+			st.s += 10;
+	} else if (*location == 10) {
+		if (st.s % 10 == 9)
+			st.s -= 9;
 		else
 			st.s++;
 	} else if (*location == 12 && flag == 2)
 		alarmMode ^= 1;
 	char format[3];
-	if(st.f == 0)
+	if (st.f == 0)
 		strcpy(format, "AM");
-	else if(st.f == 1)
+	else if (st.f == 1)
 		strcpy(format, "PM");
 	/****************** Display *************************************/
-	if(flag == 1)
+	if (flag == 1)
 		sprintf(temp, "%s %02d:%02d:%02d Save", format, st.h, st.m, st.s);
-	else if(flag == 2)
-		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s, alarmSet[alarmMode]);
+	else if (flag == 2)
+		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s,
+				alarmSet[alarmMode]);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, temp);
 
-
 	/***************** SetTime 후 커서 되돌리기 **************************/
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
-	for(int j = 0; j < *location; j++)
-	{
+	for (int j = 0; j < *location; j++) {
 		LCD_SendCommand(LCD_ADDR, 0b00010100);
 	}
 }
 
-
-void AdcSwitch(uint8_t *adc_point, int *location)
-{
+void AdcSwitch(uint8_t *adc_point, int *location) {
 	//***************** UP *************************************************
-	if ((ADC_value <= UP_KEY_MAX) && (*adc_point != 1)){
+	if ((ADC_value <= UP_KEY_MAX) && (*adc_point != 1)) {
 		*adc_point = 1;
 		printf("ADC_value = %d\r\n", ADC_value);
 		SetTimeUp(location);
@@ -716,26 +816,23 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 			&& (*adc_point != 3)) {
 		printf("ADC_value = %d\r\n", ADC_value);
 		*adc_point = 3;
-	//****************** LEFT **********************************************
-		if(*location <= 0){
-			for(int r = 0; r < 12; r++){
+		//****************** LEFT **********************************************
+		if (*location <= 0) {
+			for (int r = 0; r < 12; r++) {
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
 			}
 
-		*location = 12;
+			*location = 12;
 		}
 
-		else
-		{
-			if(*location == 4)
-			{
+		else {
+			if (*location == 4) {
 				LCD_SendCommand(LCD_ADDR, 0b00010000);
 				LCD_SendCommand(LCD_ADDR, 0b00010000);
 				LCD_SendCommand(LCD_ADDR, 0b00010000);
 				(*location) -= 3;
 			}
-			if(*location == 6 || *location == 9 || *location == 12)
-			{
+			if (*location == 6 || *location == 9 || *location == 12) {
 				LCD_SendCommand(LCD_ADDR, 0b00010000);
 				(*location) -= 1;
 			}
@@ -748,24 +845,20 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 			&& (*adc_point != 4)) {
 		printf("ADC_value = %d\r\n", ADC_value);
 		*adc_point = 4;
-	//***************** RIGHT **********************************************
-		if (*location >= 12){
-			for(int l = 12; l > 0; l--){
+		//***************** RIGHT **********************************************
+		if (*location >= 12) {
+			for (int l = 12; l > 0; l--) {
 				LCD_SendCommand(LCD_ADDR, 0b00010000);
 			}
 			*location = 0;
-		}
-		else
-		{
-			if(*location == 0)
-			{
+		} else {
+			if (*location == 0) {
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
 				(*location) += 3;
 			}
-			if(*location == 4 || *location == 7 || *location == 10)
-			{
+			if (*location == 4 || *location == 7 || *location == 10) {
 				LCD_SendCommand(LCD_ADDR, 0b00010100);
 				(*location) += 1;
 			}
@@ -780,100 +873,202 @@ void AdcSwitch(uint8_t *adc_point, int *location)
 
 }
 
-void BicycleSong()
+void BicycleSong() {
+
+	for (int i = 0; i < bell_length; i++) {
+		if (longClick == 0) {
+			TIM2->ARR = bicycle[i];
+			TIM2->CCR1 = TIM2->ARR / VOLUME;
+			HAL_Delay(interval[i]);
+			TIM2->CCR1 = 0;
+			HAL_Delay(mute[i]);
+		}
+	}
+	for (int i = 0; i < bell_length_2; i++) {
+		if (longClick == 0) {
+			TIM2->ARR = bicycle_2[i];
+			TIM2->CCR1 = TIM2->ARR / VOLUME;
+			HAL_Delay(interval_2[i]);
+			TIM2->CCR1 = 0;
+			HAL_Delay(mute_2[i]);
+		}
+	}
+	for (int i = 0; i < bell_length_3; i++) {
+		if (longClick == 0) {
+			TIM2->ARR = bicycle_3[i];
+			TIM2->CCR1 = TIM2->ARR / VOLUME;
+			HAL_Delay(interval_3[i]);
+			TIM2->CCR1 = 0;
+			HAL_Delay(mute_3[i]);
+		}
+	}
+	for (int i = 0; i < bell_length_4; i++) {
+		if (longClick == 0) {
+			TIM2->ARR = bicycle_4[i];
+			TIM2->CCR1 = TIM2->ARR / VOLUME;
+			HAL_Delay(interval_4[i]);
+			TIM2->CCR1 = 0;
+			HAL_Delay(mute_4[i]);
+		}
+	}
+}
+
+void underworld() {
+	for (int i = 0; i < underworld_length; i++) {
+		TIM2->ARR = underworld_melody[i];
+		TIM2->CCR1 = TIM2->ARR / VOLUME;
+		HAL_Delay(1500 / underworld_tempo[i]);
+		//TIM2 -> CCR1 = 0;
+		//HAL_Delay(mute[i]);
+	}
+}
+
+
+
+
+
+//********************************************************** flash
+
+
+static uint32_t GetSector(uint32_t Address)
 {
-	 for(int i = 0; i < bell_length; i++){
-		  TIM2 -> ARR = bicycle[i];
-		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
-		  HAL_Delay(interval[i]);
-		  TIM2 -> CCR1 = 0;
-		  HAL_Delay(mute[i]);
-	  }
-	  for(int i = 0; i < bell_length_2; i++){
-		  TIM2 -> ARR = bicycle_2[i];
-		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
-		  HAL_Delay(interval_2[i]);
-		  TIM2 -> CCR1 = 0;
-		  HAL_Delay(mute_2[i]);
-	  }
-	  for(int i = 0; i < bell_length_3; i++){
-		  TIM2 -> ARR = bicycle_3[i];
-		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
-		  HAL_Delay(interval_3[i]);
-		  TIM2 -> CCR1 = 0;
-		  HAL_Delay(mute_3[i]);
-	  }
-	  for(int i = 0; i < bell_length_4; i++){
-		  TIM2 -> ARR = bicycle_4[i];
-		  TIM2 -> CCR1 = TIM2 -> ARR / VOLUME;
-		  HAL_Delay(interval_4[i]);
-		  TIM2 -> CCR1 = 0;
-		  HAL_Delay(mute_4[i]);
-	  }
+  uint32_t sector = 0;
+
+  if((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
+  {
+    sector = FLASH_SECTOR_0;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_2) && (Address >= ADDR_FLASH_SECTOR_1))
+  {
+    sector = FLASH_SECTOR_1;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_3) && (Address >= ADDR_FLASH_SECTOR_2))
+  {
+    sector = FLASH_SECTOR_2;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_4) && (Address >= ADDR_FLASH_SECTOR_3))
+  {
+    sector = FLASH_SECTOR_3;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_5) && (Address >= ADDR_FLASH_SECTOR_4))
+  {
+    sector = FLASH_SECTOR_4;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_6) && (Address >= ADDR_FLASH_SECTOR_5))
+  {
+    sector = FLASH_SECTOR_5;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_7) && (Address >= ADDR_FLASH_SECTOR_6))
+  {
+    sector = FLASH_SECTOR_6;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_8) && (Address >= ADDR_FLASH_SECTOR_7))
+  {
+    sector = FLASH_SECTOR_7;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
+  {
+    sector = FLASH_SECTOR_8;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_10) && (Address >= ADDR_FLASH_SECTOR_9))
+  {
+    sector = FLASH_SECTOR_9;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_11) && (Address >= ADDR_FLASH_SECTOR_10))
+  {
+    sector = FLASH_SECTOR_10;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_12) && (Address >= ADDR_FLASH_SECTOR_11))
+  {
+    sector = FLASH_SECTOR_11;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_13) && (Address >= ADDR_FLASH_SECTOR_12))
+  {
+    sector = FLASH_SECTOR_12;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_14) && (Address >= ADDR_FLASH_SECTOR_13))
+  {
+    sector = FLASH_SECTOR_13;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_15) && (Address >= ADDR_FLASH_SECTOR_14))
+  {
+    sector = FLASH_SECTOR_14;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_16) && (Address >= ADDR_FLASH_SECTOR_15))
+  {
+    sector = FLASH_SECTOR_15;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_17) && (Address >= ADDR_FLASH_SECTOR_16))
+  {
+    sector = FLASH_SECTOR_16;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_18) && (Address >= ADDR_FLASH_SECTOR_17))
+  {
+    sector = FLASH_SECTOR_17;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_19) && (Address >= ADDR_FLASH_SECTOR_18))
+  {
+    sector = FLASH_SECTOR_18;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_20) && (Address >= ADDR_FLASH_SECTOR_19))
+  {
+    sector = FLASH_SECTOR_19;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_21) && (Address >= ADDR_FLASH_SECTOR_20))
+  {
+    sector = FLASH_SECTOR_20;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_22) && (Address >= ADDR_FLASH_SECTOR_21))
+  {
+    sector = FLASH_SECTOR_21;
+  }
+  else if((Address < ADDR_FLASH_SECTOR_23) && (Address >= ADDR_FLASH_SECTOR_22))
+  {
+    sector = FLASH_SECTOR_22;
+  }
+  else /* (Address < FLASH_END_ADDR) && (Address >= ADDR_FLASH_SECTOR_23) */
+  {
+    sector = FLASH_SECTOR_23;
+  }
+  return sector;
 }
 
 
-void Song(){
-	//Underworld melody
-	int underworld_melody[] = {
-	  NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,
-	  NOTE_AS3, NOTE_AS4, 0,
-	  0,
-	  NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,
-	  NOTE_AS3, NOTE_AS4, 0,
-	  0,
-	  NOTE_F3, NOTE_F4, NOTE_D3, NOTE_D4,
-	  NOTE_DS3, NOTE_DS4, 0,
-	  0,
-	  NOTE_F3, NOTE_F4, NOTE_D3, NOTE_D4,
-	  NOTE_DS3, NOTE_DS4, 0,
-	  0, NOTE_DS4, NOTE_CS4, NOTE_D4,
-	  NOTE_CS4, NOTE_DS4,
-	  NOTE_DS4, NOTE_GS3,
-	  NOTE_G3, NOTE_CS4,
-	  NOTE_C4, NOTE_FS4, NOTE_F4, NOTE_E3, NOTE_AS4, NOTE_A4,
-	  NOTE_GS4, NOTE_DS4, NOTE_B3,
-	  NOTE_AS3, NOTE_A3, NOTE_GS3,
-	  0, 0, 0
-	};
-	//Underwolrd tempo
-	int underworld_tempo[] = {
-	  12, 12, 12, 12,
-	  12, 12, 6,
-	  3,
-	  12, 12, 12, 12,
-	  12, 12, 6,
-	  3,
-	  12, 12, 12, 12,
-	  12, 12, 6,
-	  3,
-	  12, 12, 12, 12,
-	  12, 12, 6,
-	  6, 18, 18, 18,
-	  6, 6,
-	  6, 6,
-	  6, 6,
-	  18, 18, 18, 18, 18, 18,
-	  10, 10, 10,
-	  10, 10, 10,
-	  3, 3, 3
-	};
-
+static uint32_t GetSectorSize(uint32_t Sector)
+{
+  uint32_t sectorsize = 0x00;
+  if((Sector == FLASH_SECTOR_0) || (Sector == FLASH_SECTOR_1) || (Sector == FLASH_SECTOR_2) ||\
+     (Sector == FLASH_SECTOR_3) || (Sector == FLASH_SECTOR_12) || (Sector == FLASH_SECTOR_13) ||\
+     (Sector == FLASH_SECTOR_14) || (Sector == FLASH_SECTOR_15))
+  {
+    sectorsize = 16 * 1024;
+  }
+  else if((Sector == FLASH_SECTOR_4) || (Sector == FLASH_SECTOR_16))
+  {
+    sectorsize = 64 * 1024;
+  }
+  else
+  {
+    sectorsize = 128 * 1024;
+  }
+  return sectorsize;
 }
+
+
+
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
+	/* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
 	__disable_irq();
 	while (1) {
 	}
-  /* USER CODE END Error_Handler_Debug */
+	/* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
