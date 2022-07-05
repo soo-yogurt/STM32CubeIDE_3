@@ -59,7 +59,7 @@ typedef struct FLAHTIME {
 } FT;
 
 FT flashTime;
-
+FT flashTime2;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -116,7 +116,7 @@ uint8_t flag = 0;
 uint8_t mode = 1;
 RTC_TimeTypeDef sTime = { 0 };
 RTC_DateTypeDef sDate = { 0 };
-char buf[25];
+char buf[25]; // printf
 char temp[25]; // set Time
 char buf2[25]; //  set Alarm
 char ampm[2][3] = { "AM", "PM" };
@@ -259,6 +259,8 @@ int main(void)
 		EraseInitStruct.Sector = FirstSector;
 		EraseInitStruct.NbSectors = NbOfSectors;
 
+
+
 		flashTime.format = *((uint32_t*) 0x08100004);
 		flashTime.hour = *((uint32_t*) 0x08100008);
 		flashTime.minutes = *((uint32_t*) 0x0810000C);
@@ -267,6 +269,19 @@ int main(void)
 		flashTime.alramHour = *((uint32_t*) 0x08100018);
 		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
 		flashTime.alramSeconds = *((uint32_t*) 0x08100100);
+
+
+		flashTime2.format = *((uint32_t*) 0x08100004);
+		flashTime2.hour = *((uint32_t*) 0x08100008);
+		flashTime2.minutes = *((uint32_t*) 0x0810000C);
+		flashTime2.seconds = *((uint32_t*) 0x08100010);
+		flashTime2.alramFormat = *((uint32_t*) 0x08100014);
+		flashTime2.alramHour = *((uint32_t*) 0x08100018);
+		flashTime2.alramMinutes = *((uint32_t*) 0x0810001C);
+		flashTime2.alramSeconds = *((uint32_t*) 0x08100100);
+
+
+
 	} else {
 
 		HAL_FLASH_Unlock();

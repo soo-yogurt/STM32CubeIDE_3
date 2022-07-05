@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="print"/>
+		<item key="selection" value="re"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="Re"/>
+			<item value="Reci"/>
+			<item value="Rec"/>
+			<item value="buf"/>
+			<item value="rx"/>
+			<item value="mode"/>
 			<item value="print"/>
 			<item value="0x08100014"/>
 			<item value="0x00001111"/>
@@ -17,20 +23,14 @@
 			<item value="save"/>
 			<item value="start"/>
 			<item value="ADC"/>
-			<item value="Address = FLASH_USER_START_ADDR;"/>
-			<item value="Address"/>
-			<item value="periodElapsedcallback("/>
-			<item value="callback("/>
-			<item value="callback"/>
-			<item value="callbacj"/>
 		</list>
 		<list key="replacehistory">
 			<item value="AdcSwitch"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="1231"/>
-		<item key="DIALOG_Y_ORIGIN" value="116"/>
+		<item key="DIALOG_X_ORIGIN" value="809"/>
+		<item key="DIALOG_Y_ORIGIN" value="126"/>
 		<item key="DIALOG_WIDTH" value="322"/>
 		<item key="DIALOG_HEIGHT" value="391"/>
 		<item key="DIALOG_FONT_NAME" value="1|맑은 고딕|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕"/>
