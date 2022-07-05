@@ -30781,3 +30781,72 @@
 2022-07-04 00:08:45,537 [INFO] IPUIPlugin:75 - create IPUIPlugin
 2022-07-04 00:08:45,653 [INFO] ApiDbMcu:488 - Load IP Config File for PDM2PCM
 2022-07-04 00:08:46,949 [INFO] OpenFileManager:323 - Restore cursor
+2022-07-05 09:10:04,893 [INFO] Activator:177 - 
+
+
+2022-07-05 09:10:04,908 [INFO] Activator:178 - !SESSION log4j initialized
+2022-07-05 09:10:17,345 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com
+2022-07-05 13:02:33,360 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 13:02:33,360 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 13:02:33,360 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 15:04:01,917 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 15:04:01,933 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 15:04:01,933 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 15:04:02,198 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 15:04:02,198 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 15:04:02,198 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 15:33:31,642 [INFO] Activator:177 - 
+
+
+2022-07-05 15:33:31,642 [INFO] Activator:178 - !SESSION log4j initialized
+2022-07-05 15:33:37,348 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com
+2022-07-05 16:49:43,380 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 16:49:43,396 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 16:49:43,396 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 16:54:04,265 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 16:54:04,281 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 16:54:04,281 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 16:55:47,658 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:47,658 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:47,658 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:47,658 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:47,658 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:50,108 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:50,108 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:50,108 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:50,108 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 16:55:50,123 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 17:04:43,865 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:04:43,865 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:04:43,865 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:04:50,202 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:04:50,202 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:04:50,202 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:25:31,827 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:25:31,827 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:25:31,827 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:01,751 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:01,751 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:01,752 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:05,560 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:05,561 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:05,562 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:11,141 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:11,141 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:42:11,142 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:47:32,500 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:47:32,500 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 17:47:32,500 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 18:05:42,093 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:42,093 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:42,093 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:42,093 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:42,093 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:43,202 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:43,202 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:43,202 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:43,202 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:05:43,202 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.UnknownHostException: stmicroelectronics.d3.sc.omtrdc.net
+2022-07-05 18:09:36,670 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 18:09:36,670 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com
+2022-07-05 18:09:36,670 [ERROR] ConfigurationRetriever:139 - IOException on connection: sw-center.st.com

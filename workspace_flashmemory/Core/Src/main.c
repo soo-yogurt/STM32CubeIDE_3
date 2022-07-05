@@ -128,13 +128,13 @@ int main(void)
     (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
 
   /* Get the 1st sector to erase */
-  FirstSector = GetSector(FLASH_USER_START_ADDR);
+  FirstSector = GetSector(FLASH_USER_START_ADDR); // 특정 섹터의 범위를 지정한다.
   /* Get the number of sector to erase from 1st sector*/
   NbOfSectors = GetSector(FLASH_USER_END_ADDR) - FirstSector + 1;
   /* Fill EraseInit structure*/
-  EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
-  EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
-  EraseInitStruct.Sector        = FirstSector;
+  EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS; // 섹터단위로 지운다.
+  EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3; // 2.7~ 3.6V 사이의 전압을 사용한다.
+  EraseInitStruct.Sector        = FirstSector;  // 지울 섹터의 범위
   EraseInitStruct.NbSectors     = NbOfSectors;
 
   /* Note: If an erase operation in Flash memory also concerns data in the data or instruction cache,
@@ -195,6 +195,8 @@ int main(void)
    }
      uint8_t velue1;
      velue1 =  *((uint32_t *)0x08100000);
+     uint8_t velue2;
+     velue2 = *((uint32_t *)0x08100004);
 
 
   /* Lock the Flash to disable the flash control register access (recommended

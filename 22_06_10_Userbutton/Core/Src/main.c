@@ -64,18 +64,11 @@ FT flashTime;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
-// flash memory
-#define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_12
-
-#define DATA_32                 ((uint32_t)0x00001111)
-
 //EXTI
 #define LONG_CLICK_MIN 700
 #define LONG_CLICK_MAX 5000
 #define DOUBLE_CLICK_MIN 40
 #define DOUBLE_CLICK_MAX 120
-
 //ADC
 #define UP_KEY_MIN 0
 #define UP_KEY_MAX 15
@@ -85,14 +78,19 @@ FT flashTime;
 #define LEFT_KEY_MAX 1960
 #define RIGHT_KEY_MIN 2920
 #define RIGHT_KEY_MAX 3010
-
 //LCD
 #define LCD_ADDR (0x27 << 1)
 #define PIN_RS    (1 << 0)
 #define PIN_EN    (1 << 2)
 #define BACKLIGHT (1 << 3)
-
 #define LCD_DELAY_MS 5
+
+// flash memory
+#define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_12   /* Start @ of user Flash area */
+/* End @ of user Flash area : sector start address + sector size -1 */
+#define FLASH_USER_END_ADDR     ADDR_FLASH_SECTOR_23  +  GetSectorSize(ADDR_FLASH_SECTOR_23) - 1
+#define DATA_32                 ((uint32_t)0x00001111) // 플래시 메모리 매직 넘버, 초기 값으로 설정 하고 싶을때 해당 값 바꾸자
+#define DEBUG 100 // 100 ////
 
 // 숫자가 클수록 소리가 작아진다.
 #define VOLUME 300
@@ -167,6 +165,15 @@ uint16_t underworld_tempo[] = { 12, 12, 12, 12, 12, 12, 6, 3, 12, 12, 12, 12,
 
 uint8_t underworld_length = sizeof(underworld_melody) / sizeof(uint16_t);
 
+// flash memory ---------------------------------------------------
+static FLASH_EraseInitTypeDef EraseInitStruct;
+static uint32_t GetSector(uint32_t Address);
+static uint32_t GetSectorSize(uint32_t Sector);
+
+uint32_t FirstSector = 0, NbOfSectors = 0;
+uint32_t Address = 0, SECTORError = 0;
+__IO uint32_t data32 = 0, MemoryProgramStatus = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -194,20 +201,13 @@ void SaveSeting();
 void underworld();
 void BicycleSong();
 void SetUpflash();
-// flash memory ---------------------------------------------------
-static FLASH_EraseInitTypeDef EraseInitStruct;
-static uint32_t GetSector(uint32_t Address);
-uint32_t FirstSector = 0, NbOfSectors = 0;
-uint32_t Address = 0, SECTORError = 0;
-__IO uint32_t data32 = 0, MemoryProgramStatus = 0;
-static uint32_t GetSectorSize(uint32_t Sector);
-
+void AtBug();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int __io_putchar(int ch) {
-	HAL_UART_Transmit(&huart3, (uint8_t*) ch, 1, 100);
+	HAL_UART_Transmit(&huart3, (uint8_t*)&ch, 1, 100);
 	return ch;
 }
 /* USER CODE END 0 */
@@ -218,28 +218,18 @@ int __io_putchar(int ch) {
  */
 int main(void) {
 	/* USER CODE BEGIN 1 */
-
 	int location = 0;
 	uint8_t adc_point = 0;
-
 	/* USER CODE END 1 */
-
 	/* MCU Configuration--------------------------------------------------------*/
-
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
-
 	/* USER CODE BEGIN Init */
-
 	/* USER CODE END Init */
-
 	/* Configure the system clock */
 	SystemClock_Config();
-
 	/* USER CODE BEGIN SysInit */
-
 	/* USER CODE END SysInit */
-
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	MX_RTC_Init();
@@ -249,30 +239,19 @@ int main(void) {
 	MX_USART2_UART_Init();
 	MX_I2C1_Init();
 	MX_TIM2_Init();
-
 	/* Initialize interrupts */
 	MX_NVIC_Init();
 	/* USER CODE BEGIN 2 */
 
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-	init();
-	HAL_TIM_Base_Init(&htim3);
-	HAL_TIM_Base_Start_IT(&htim3);
+	if (*((uint32_t*) 0x08104000) == DATA_32) {
 
-	Address = ADDR_FLASH_SECTOR_12;
-	//((uint32_t)0x08100000);
-	HAL_FLASH_Lock();
+		FirstSector = GetSector(FLASH_USER_START_ADDR);
+		NbOfSectors = 1;
+		EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
+		EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+		EraseInitStruct.Sector = FirstSector;
+		EraseInitStruct.NbSectors = NbOfSectors;
 
-	  FirstSector = GetSector(FLASH_USER_START_ADDR);
-	  /* Get the number of sector to erase from 1st sector*/
-	  NbOfSectors = GetSector(FLASH_USER_END_ADDR) - FirstSector + 1;
-	  /* Fill EraseInit structure*/
-	  EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
-	  EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
-	  EraseInitStruct.Sector        = FirstSector;
-	  EraseInitStruct.NbSectors     = NbOfSectors;
-
-	if (*((uint32_t*) 0x08100000) == 0x00001111) {
 		flashTime.format = *((uint32_t*) 0x08100004);
 		flashTime.hour = *((uint32_t*) 0x08100008);
 		flashTime.minutes = *((uint32_t*) 0x0810000C);
@@ -282,53 +261,91 @@ int main(void) {
 		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
 		flashTime.alramSeconds = *((uint32_t*) 0x08100100);
 	} else {
+#if DEBUG == 100
+		HAL_FLASH_Unlock();
+#endif
+
+		FirstSector = GetSector(FLASH_USER_START_ADDR);
+		/* Get the number of sector to erase from 1st sector*/
+		//NbOfSectors = GetSector(FLASH_USER_END_ADDR) - FirstSector + 1;
+		NbOfSectors = 2;
+		/* Fill EraseInit structure*/
+		EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
+		EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+		EraseInitStruct.Sector = FirstSector;
+		EraseInitStruct.NbSectors = NbOfSectors;
+
 		if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK) {
-		    /*
-		      Error occurred while sector erase.
-		      User can add here some code to deal with this error.
-		      SECTORError will contain the faulty sector and then to know the code error on this sector,
-		      user can call function 'HAL_FLASH_GetError()'
-		    */
-		    /* Infinite loop */
+
 		}
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address, DATA_32);
 
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 0x08100004, 0);
-		flashTime.format = *((uint32_t*) 0x08100004);
+		NbOfSectors = 1;
+		EraseInitStruct.NbSectors = NbOfSectors;
 
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 0x08100008, 0x00000012);
-		flashTime.hour = *((uint32_t*) 0x08100008);
+		Address = ADDR_FLASH_SECTOR_12;
 
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08104000),
+				((uint32_t) DATA_32));
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100004), 0);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100008), 12);
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810000C), 0);
-		flashTime.minutes = *((uint32_t*) 0x0810000C);
-
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100010), 0);
-		flashTime.seconds = *((uint32_t*) 0x08100010);
-
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100014), 0);
-		flashTime.alramFormat = *((uint32_t*) 0x08100014);
-
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018), 0x00000012);
-		flashTime.alramHour = *((uint32_t*) 0x08100018);
-
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018), 12);
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C), 0);
-		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
-
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100100), 0);
-		flashTime.alramSeconds = *((uint32_t*) 0x08100100);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100020), 0);
+#if DEBUG == 100
+		HAL_FLASH_Lock();
+#endif
 	}
 
-	HAL_FLASH_Unlock();
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+	init();
+	HAL_TIM_Base_Init(&htim3);
+	HAL_TIM_Base_Start_IT(&htim3);
+
+	flashTime.format = *((uint32_t*) 0x08100004);
+	flashTime.hour = *((uint32_t*) 0x08100008);
+	flashTime.minutes = *((uint32_t*) 0x0810000C);
+	flashTime.seconds = *((uint32_t*) 0x08100010);
+	flashTime.alramFormat = *((uint32_t*) 0x08100014);
+	flashTime.alramHour = *((uint32_t*) 0x08100018);
+	flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
+	flashTime.alramSeconds = *((uint32_t*) 0x08100020);
 
 	at.f = flashTime.alramFormat;
 	at.h = flashTime.alramHour;
 	at.m = flashTime.alramMinutes;
 	at.s = flashTime.alramSeconds;
 
+	//---------------------------- flash memory bug ------------
+
+	if (at.f != 0 || at.f != 1)
+		at.f = 0;
+	if (at.h > 12)
+		at.f = 12;
+	if (at.m > 60)
+		at.m = 59;
+	if (at.s > 60)
+		at.s = 59;
+
+	//-------------------------------------------------------
+
 	sTime.Hours = flashTime.hour;
+	if(sTime.Hours > 12)
+		sTime.Hours = 12;
+
 	sTime.Minutes = flashTime.minutes;
+	if(sTime.Minutes > 60)
+	sTime.Minutes = 59;
+
 	sTime.Seconds = flashTime.seconds;
+	if(sTime.Seconds > 60)
+		sTime.Seconds = 59;
+
 	sTime.TimeFormat = flashTime.format;
+	if(sTime.TimeFormat != 1 || sTime.TimeFormat != 2 )
+		sTime.TimeFormat = 0;
 
 	sDate.Year = 22;
 	sDate.Month = 6;
@@ -426,6 +443,16 @@ int main(void) {
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
 			LCD_SendString(LCD_ADDR, flag1buf);
 			//********************* Display ** LINE 2 ******************************
+			if (at.f != 0 || at.f != 1)
+				at.f = 0;
+			if (at.h > 12)
+				at.f = 12;
+			if (at.m > 60)
+				at.m = 59;
+			if (at.s > 60)
+				at.s = 59;
+
+
 			sprintf(buf2, "%s %02d:%02d:%02d %s ", ampm[at.f], at.h, at.m, at.s,
 					alarmSet[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
@@ -675,9 +702,9 @@ void SaveSeting() {
 }
 void SetTimeDown(const int *location) {
 	if (*location == 0) {
-		if (st.f == 0)
+		if (st.f <= 0)
 			st.f = 1;
-		else if (st.f == 1)
+		else if (st.f >= 1)
 			st.f = 0;
 	} else if (*location == 4) {
 		if (st.h == 0)
@@ -707,6 +734,16 @@ void SetTimeDown(const int *location) {
 	} else if (*location == 12 && flag == 2)
 		alarmMode ^= 1;
 
+//---------------------------- flash memory bug ------------
+	if (st.f != 1 || st.f != 0)
+		st.f = 0;
+	if (st.h > 12)
+		st.f = 12;
+	if (st.m > 60)
+		st.m = 59;
+	if (st.s > 60)
+		st.s = 59;
+	//-------------------------------------------------------
 	char format[3];
 	if (st.f == 0)
 		strcpy(format, "AM");
@@ -771,7 +808,7 @@ void SetTimeUp(const int *location) {
 		strcpy(format, "PM");
 	/****************** Display *************************************/
 	if (flag == 1)
-		sprintf(temp, "%s %02d:%02d:%02d Save", format, st.h, st.m, st.s);
+		sprintf(temp, "%s %02d:%02d:%02d     ", format, st.h, st.m, st.s);
 	else if (flag == 2)
 		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s,
 				alarmSet[alarmMode]);
@@ -1006,6 +1043,16 @@ static uint32_t GetSectorSize(uint32_t Sector) {
 	return sectorsize;
 }
 void SetUpflash() {
+
+	if (at.f != 0 || at.f != 1)
+		at.f = 0;
+	if (at.h > 12)
+		at.f = 12;
+	if (at.m > 60)
+		at.m = 59;
+	if (at.s > 60)
+		at.s = 59;
+
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 	flashTime.format = sTime.TimeFormat;
@@ -1017,8 +1064,11 @@ void SetUpflash() {
 	flashTime.alramMinutes = at.m;
 	flashTime.alramSeconds = at.s;
 
-	HAL_FLASH_Lock();
+	HAL_FLASH_Unlock();
 
+	if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK) {
+
+	}
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100004),
 			flashTime.format);
 
@@ -1040,11 +1090,23 @@ void SetUpflash() {
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C),
 			flashTime.alramMinutes);
 
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100100),
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100020),
 			flashTime.alramSeconds);
-	HAL_FLASH_Unlock();
-}
 
+	HAL_FLASH_Lock();
+
+}
+void AtBug()
+{
+	if (at.f != 0 || at.f != 1)
+		at.f = 0;
+	if (at.h > 12)
+		at.f = 12;
+	if (at.m > 60)
+		at.m = 59;
+	if (at.s > 60)
+		at.s = 59;
+}
 /* USER CODE END 4 */
 
 /**
