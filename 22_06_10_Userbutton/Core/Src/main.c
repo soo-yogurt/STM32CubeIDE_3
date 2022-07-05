@@ -90,7 +90,7 @@ FT flashTime;
 /* End @ of user Flash area : sector start address + sector size -1 */
 #define FLASH_USER_END_ADDR     ADDR_FLASH_SECTOR_23  +  GetSectorSize(ADDR_FLASH_SECTOR_23) - 1
 #define DATA_32                 ((uint32_t)0x00001111) // 플래시 메모리 매직 넘버, 초기 값으로 설정 하고 싶을때 해당 값 바꾸자
-#define DEBUG 100 // 100 ////
+
 
 // 숫자가 클수록 소리가 작아진다.
 #define VOLUME 300
@@ -168,7 +168,6 @@ uint8_t underworld_length = sizeof(underworld_melody) / sizeof(uint16_t);
 // flash memory ---------------------------------------------------
 static FLASH_EraseInitTypeDef EraseInitStruct;
 static uint32_t GetSector(uint32_t Address);
-static uint32_t GetSectorSize(uint32_t Sector);
 
 uint32_t FirstSector = 0, NbOfSectors = 0;
 uint32_t Address = 0, SECTORError = 0;
@@ -261,9 +260,9 @@ int main(void) {
 		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
 		flashTime.alramSeconds = *((uint32_t*) 0x08100100);
 	} else {
-#if DEBUG == 100
+
 		HAL_FLASH_Unlock();
-#endif
+
 
 		FirstSector = GetSector(FLASH_USER_START_ADDR);
 		/* Get the number of sector to erase from 1st sector*/
@@ -294,9 +293,9 @@ int main(void) {
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018), 12);
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C), 0);
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100020), 0);
-#if DEBUG == 100
+
 		HAL_FLASH_Lock();
-#endif
+
 	}
 
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
@@ -443,16 +442,6 @@ int main(void) {
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
 			LCD_SendString(LCD_ADDR, flag1buf);
 			//********************* Display ** LINE 2 ******************************
-			if (at.f != 0 || at.f != 1)
-				at.f = 0;
-			if (at.h > 12)
-				at.f = 12;
-			if (at.m > 60)
-				at.m = 59;
-			if (at.s > 60)
-				at.s = 59;
-
-
 			sprintf(buf2, "%s %02d:%02d:%02d %s ", ampm[at.f], at.h, at.m, at.s,
 					alarmSet[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
@@ -701,48 +690,38 @@ void SaveSeting() {
 	}
 }
 void SetTimeDown(const int *location) {
-	if (*location == 0) {
-		if (st.f <= 0)
-			st.f = 1;
-		else if (st.f >= 1)
-			st.f = 0;
+	if (*location == 3) {
 	} else if (*location == 4) {
-		if (st.h == 0)
-			st.h = 12;
-		else
-			st.h -= 1;
-	} else if (*location == 6) {
-		if (st.m < 10)
-			st.m += 50;
-		else
-			st.m -= 10;
-	} else if (*location == 7) {
-		if (st.m % 10 == 0)
-			st.m += 9;
-		else
-			st.m--;
-	} else if (*location == 9) {
-		if (st.s < 10)
-			st.s += 50;
-		else
-			st.s -= 10;
-	} else if (*location == 10) {
-		if (st.s % 10 == 0)
-			st.s += 9;
-		else
-			st.s--;
-	} else if (*location == 12 && flag == 2)
-		alarmMode ^= 1;
+			if (st.h == 0)
+				st.h = 12;
+			else
+				st.h -= 1;
+		} else if (*location == 0) {
+			st.f ^= 1;
+		} else if (*location == 6) {
+			if (st.m < 10)
+				st.m += 50;
+			else
+				st.m -= 10;
+		} else if (*location == 7) {
+			if (st.m % 10 == 0)
+				st.m += 9;
+			else
+				st.m--;
+		} else if (*location == 9) {
+			if (st.s < 10)
+				st.s += 50;
+			else
+				st.s -= 10;
+		} else if (*location == 10) {
+			if (st.s % 10 == 0)
+				st.s += 9;
+			else
+				st.s--;
+		} else if (*location == 12 && flag == 2)
+			alarmMode ^= 1;
 
-//---------------------------- flash memory bug ------------
-	if (st.f != 1 || st.f != 0)
-		st.f = 0;
-	if (st.h > 12)
-		st.f = 12;
-	if (st.m > 60)
-		st.m = 59;
-	if (st.s > 60)
-		st.s = 59;
+
 	//-------------------------------------------------------
 	char format[3];
 	if (st.f == 0)
@@ -1028,20 +1007,7 @@ static uint32_t GetSector(uint32_t Address) {
 	return sector;
 }
 
-static uint32_t GetSectorSize(uint32_t Sector) {
-	uint32_t sectorsize = 0x00;
-	if ((Sector == FLASH_SECTOR_0) || (Sector == FLASH_SECTOR_1)
-			|| (Sector == FLASH_SECTOR_2) || (Sector == FLASH_SECTOR_3)
-			|| (Sector == FLASH_SECTOR_12) || (Sector == FLASH_SECTOR_13)
-			|| (Sector == FLASH_SECTOR_14) || (Sector == FLASH_SECTOR_15)) {
-		sectorsize = 16 * 1024;
-	} else if ((Sector == FLASH_SECTOR_4) || (Sector == FLASH_SECTOR_16)) {
-		sectorsize = 64 * 1024;
-	} else {
-		sectorsize = 128 * 1024;
-	}
-	return sectorsize;
-}
+
 void SetUpflash() {
 
 	if (at.f != 0 || at.f != 1)
