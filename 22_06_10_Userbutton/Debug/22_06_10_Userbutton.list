@@ -975,55 +975,62 @@ int __io_putchar(int ch) {
  80008e0:	20000460 	.word	0x20000460
 
 080008e4 <main>:
-
 /**
- * @brief  The application entry point.
- * @retval int
- */
-int main(void) {
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
  80008e4:	b5b0      	push	{r4, r5, r7, lr}
  80008e6:	b08e      	sub	sp, #56	; 0x38
  80008e8:	af04      	add	r7, sp, #16
-	/* USER CODE BEGIN 1 */
+  /* USER CODE BEGIN 1 */
 	int location = 0;
  80008ea:	2300      	movs	r3, #0
  80008ec:	627b      	str	r3, [r7, #36]	; 0x24
 	uint8_t adc_point = 0;
  80008ee:	2300      	movs	r3, #0
  80008f0:	f887 3023 	strb.w	r3, [r7, #35]	; 0x23
-	/* USER CODE END 1 */
-	/* MCU Configuration--------------------------------------------------------*/
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
  80008f4:	f002 f868 	bl	80029c8 <HAL_Init>
-	/* USER CODE BEGIN Init */
-	/* USER CODE END Init */
-	/* Configure the system clock */
-	SystemClock_Config();
+
+  /* USER CODE BEGIN Init */
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
  80008f8:	f000 fb52 	bl	8000fa0 <SystemClock_Config>
-	/* USER CODE BEGIN SysInit */
-	/* USER CODE END SysInit */
-	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
+
+  /* USER CODE BEGIN SysInit */
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
  80008fc:	f7ff fee8 	bl	80006d0 <MX_GPIO_Init>
-	MX_RTC_Init();
+  MX_RTC_Init();
  8000900:	f001 fc86 	bl	8002210 <MX_RTC_Init>
-	MX_USART3_UART_Init();
+  MX_USART3_UART_Init();
  8000904:	f001 ff90 	bl	8002828 <MX_USART3_UART_Init>
-	MX_TIM3_Init();
+  MX_TIM3_Init();
  8000908:	f001 fea2 	bl	8002650 <MX_TIM3_Init>
-	MX_ADC1_Init();
+  MX_ADC1_Init();
  800090c:	f7ff fe4a 	bl	80005a4 <MX_ADC1_Init>
-	MX_USART2_UART_Init();
+  MX_USART2_UART_Init();
  8000910:	f001 ff60 	bl	80027d4 <MX_USART2_UART_Init>
-	MX_I2C1_Init();
+  MX_I2C1_Init();
  8000914:	f7ff ff4c 	bl	80007b0 <MX_I2C1_Init>
-	MX_TIM2_Init();
+  MX_TIM2_Init();
  8000918:	f001 fe24 	bl	8002564 <MX_TIM2_Init>
-	/* Initialize interrupts */
-	MX_NVIC_Init();
+
+  /* Initialize interrupts */
+  MX_NVIC_Init();
  800091c:	f000 fbb2 	bl	8001084 <MX_NVIC_Init>
-	/* USER CODE BEGIN 2 */
+  /* USER CODE BEGIN 2 */
 
 	if (*((uint32_t*) 0x08104000) == DATA_32) {
  8000920:	4b23      	ldr	r3, [pc, #140]	; (80009b0 <main+0xcc>)
@@ -1465,11 +1472,11 @@ int main(void) {
  8000c1a:	2100      	movs	r1, #0
  8000c1c:	4826      	ldr	r0, [pc, #152]	; (8000cb8 <main+0x3d4>)
  8000c1e:	f007 f92f 	bl	8007e80 <memset>
-	/* USER CODE BEGIN WHILE */
+  /* USER CODE BEGIN WHILE */
 	while (1) {
-		/* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-		/* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
 		char alarmOnOff[2][2] = { "A", " " };
  8000c22:	4b26      	ldr	r3, [pc, #152]	; (8000cbc <main+0x3d8>)
  8000c24:	681b      	ldr	r3, [r3, #0]
@@ -1944,22 +1951,22 @@ int main(void) {
  8000f9c:	20000320 	.word	0x20000320
 
 08000fa0 <SystemClock_Config>:
-
 /**
- * @brief System Clock Configuration
- * @retval None
- */
-void SystemClock_Config(void) {
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
  8000fa0:	b580      	push	{r7, lr}
  8000fa2:	b094      	sub	sp, #80	; 0x50
  8000fa4:	af00      	add	r7, sp, #0
-	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
  8000fa6:	f107 0320 	add.w	r3, r7, #32
  8000faa:	2230      	movs	r2, #48	; 0x30
  8000fac:	2100      	movs	r1, #0
  8000fae:	4618      	mov	r0, r3
  8000fb0:	f006 ff66 	bl	8007e80 <memset>
-	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
  8000fb4:	f107 030c 	add.w	r3, r7, #12
  8000fb8:	2200      	movs	r2, #0
  8000fba:	601a      	str	r2, [r3, #0]
@@ -1968,9 +1975,9 @@ void SystemClock_Config(void) {
  8000fc0:	60da      	str	r2, [r3, #12]
  8000fc2:	611a      	str	r2, [r3, #16]
 
-	/** Configure the main internal regulator output voltage
-	 */
-	__HAL_RCC_PWR_CLK_ENABLE();
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_RCC_PWR_CLK_ENABLE();
  8000fc4:	2300      	movs	r3, #0
  8000fc6:	60bb      	str	r3, [r7, #8]
  8000fc8:	4b2c      	ldr	r3, [pc, #176]	; (800107c <SystemClock_Config+0xdc>)
@@ -1983,7 +1990,7 @@ void SystemClock_Config(void) {
  8000fd8:	f003 5380 	and.w	r3, r3, #268435456	; 0x10000000
  8000fdc:	60bb      	str	r3, [r7, #8]
  8000fde:	68bb      	ldr	r3, [r7, #8]
-	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
  8000fe0:	2300      	movs	r3, #0
  8000fe2:	607b      	str	r3, [r7, #4]
  8000fe4:	4b26      	ldr	r3, [pc, #152]	; (8001080 <SystemClock_Config+0xe0>)
@@ -1997,82 +2004,83 @@ void SystemClock_Config(void) {
  8000ff8:	607b      	str	r3, [r7, #4]
  8000ffa:	687b      	ldr	r3, [r7, #4]
 
-	/** Initializes the RCC Oscillators according to the specified parameters
-	 * in the RCC_OscInitTypeDef structure.
-	 */
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSE;
  8000ffc:	2306      	movs	r3, #6
  8000ffe:	623b      	str	r3, [r7, #32]
-			| RCC_OSCILLATORTYPE_LSE;
-	RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
  8001000:	2301      	movs	r3, #1
  8001002:	62bb      	str	r3, [r7, #40]	; 0x28
-	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
  8001004:	2301      	movs	r3, #1
  8001006:	62fb      	str	r3, [r7, #44]	; 0x2c
-	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
  8001008:	2310      	movs	r3, #16
  800100a:	633b      	str	r3, [r7, #48]	; 0x30
-	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
  800100c:	2302      	movs	r3, #2
  800100e:	63bb      	str	r3, [r7, #56]	; 0x38
-	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
  8001010:	2300      	movs	r3, #0
  8001012:	63fb      	str	r3, [r7, #60]	; 0x3c
-	RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLM = 8;
  8001014:	2308      	movs	r3, #8
  8001016:	643b      	str	r3, [r7, #64]	; 0x40
-	RCC_OscInitStruct.PLL.PLLN = 180;
+  RCC_OscInitStruct.PLL.PLLN = 180;
  8001018:	23b4      	movs	r3, #180	; 0xb4
  800101a:	647b      	str	r3, [r7, #68]	; 0x44
-	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
  800101c:	2302      	movs	r3, #2
  800101e:	64bb      	str	r3, [r7, #72]	; 0x48
-	RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
  8001020:	2304      	movs	r3, #4
  8001022:	64fb      	str	r3, [r7, #76]	; 0x4c
-	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
  8001024:	f107 0320 	add.w	r3, r7, #32
  8001028:	4618      	mov	r0, r3
  800102a:	f003 fd99 	bl	8004b60 <HAL_RCC_OscConfig>
  800102e:	4603      	mov	r3, r0
  8001030:	2b00      	cmp	r3, #0
  8001032:	d001      	beq.n	8001038 <SystemClock_Config+0x98>
-		Error_Handler();
+  {
+    Error_Handler();
  8001034:	f001 f8e6 	bl	8002204 <Error_Handler>
-	}
+  }
 
-	/** Activate the Over-Drive mode
-	 */
-	if (HAL_PWREx_EnableOverDrive() != HAL_OK) {
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
  8001038:	f003 fd42 	bl	8004ac0 <HAL_PWREx_EnableOverDrive>
  800103c:	4603      	mov	r3, r0
  800103e:	2b00      	cmp	r3, #0
  8001040:	d001      	beq.n	8001046 <SystemClock_Config+0xa6>
-		Error_Handler();
+  {
+    Error_Handler();
  8001042:	f001 f8df 	bl	8002204 <Error_Handler>
-	}
+  }
 
-	/** Initializes the CPU, AHB and APB buses clocks
-	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
  8001046:	230f      	movs	r3, #15
  8001048:	60fb      	str	r3, [r7, #12]
-			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
  800104a:	2302      	movs	r3, #2
  800104c:	613b      	str	r3, [r7, #16]
-	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
  800104e:	2300      	movs	r3, #0
  8001050:	617b      	str	r3, [r7, #20]
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
  8001052:	f44f 53a0 	mov.w	r3, #5120	; 0x1400
  8001056:	61bb      	str	r3, [r7, #24]
-	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
  8001058:	f44f 5380 	mov.w	r3, #4096	; 0x1000
  800105c:	61fb      	str	r3, [r7, #28]
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
  800105e:	f107 030c 	add.w	r3, r7, #12
  8001062:	2105      	movs	r1, #5
  8001064:	4618      	mov	r0, r3
@@ -2080,9 +2088,10 @@ void SystemClock_Config(void) {
  800106a:	4603      	mov	r3, r0
  800106c:	2b00      	cmp	r3, #0
  800106e:	d001      	beq.n	8001074 <SystemClock_Config+0xd4>
-		Error_Handler();
+  {
+    Error_Handler();
  8001070:	f001 f8c8 	bl	8002204 <Error_Handler>
-	}
+  }
 }
  8001074:	bf00      	nop
  8001076:	3750      	adds	r7, #80	; 0x50
@@ -2092,30 +2101,30 @@ void SystemClock_Config(void) {
  8001080:	40007000 	.word	0x40007000
 
 08001084 <MX_NVIC_Init>:
-
 /**
- * @brief NVIC Configuration.
- * @retval None
- */
-static void MX_NVIC_Init(void) {
+  * @brief NVIC Configuration.
+  * @retval None
+  */
+static void MX_NVIC_Init(void)
+{
  8001084:	b580      	push	{r7, lr}
  8001086:	af00      	add	r7, sp, #0
-	/* USART3_IRQn interrupt configuration */
-	HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
+  /* USART3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
  8001088:	2200      	movs	r2, #0
  800108a:	2100      	movs	r1, #0
  800108c:	2027      	movs	r0, #39	; 0x27
  800108e:	f002 f95e 	bl	800334e <HAL_NVIC_SetPriority>
-	HAL_NVIC_EnableIRQ(USART3_IRQn);
+  HAL_NVIC_EnableIRQ(USART3_IRQn);
  8001092:	2027      	movs	r0, #39	; 0x27
  8001094:	f002 f977 	bl	8003386 <HAL_NVIC_EnableIRQ>
-	/* EXTI15_10_IRQn interrupt configuration */
-	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  /* EXTI15_10_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
  8001098:	2200      	movs	r2, #0
  800109a:	2100      	movs	r1, #0
  800109c:	2028      	movs	r0, #40	; 0x28
  800109e:	f002 f956 	bl	800334e <HAL_NVIC_SetPriority>
-	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
  80010a2:	2028      	movs	r0, #40	; 0x28
  80010a4:	f002 f96f 	bl	8003386 <HAL_NVIC_EnableIRQ>
 }
@@ -4638,12 +4647,12 @@ void SetUpflash() {
  8002200:	08100020 	.word	0x08100020
 
 08002204 <Error_Handler>:
-
 /**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
-void Error_Handler(void) {
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
  8002204:	b480      	push	{r7}
  8002206:	af00      	add	r7, sp, #0
   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
@@ -4655,7 +4664,7 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8002208:	b672      	cpsid	i
 }
  800220a:	bf00      	nop
-	/* USER CODE BEGIN Error_Handler_Debug */
+  /* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
 	__disable_irq();
 	while (1) {

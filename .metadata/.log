@@ -9763,3 +9763,28 @@ C Model Exception: C Model Status [Element main.c does not exist.]
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:210)
 !SUBENTRY 1 org.eclipse.cdt.core 4 969 2022-07-05 19:15:42.664
 !MESSAGE Element main.c does not exist.
+!SESSION 2022-07-05 21:54:47.441 -----------------------------------------------
+eclipse.buildId=Version 1.9.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ko_KR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-07-05 22:03:35.970
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-07-05 22:03:36.200
+!MESSAGE Log4j initialized with config file C:\workspace_stm32\STM32CubeIDE_3\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-07-05 22:03:52.337
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2022-07-05 22:05:49.511
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\Debug\22_06_10_Userbutton.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:914)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1256)
+	at java.base/java.lang.Thread.run(Thread.java:829)

@@ -1,10 +1,10 @@
-19:56:58 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
-make -j8 all 
+22:16:18 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+make -j4 all 
 arm-none-eabi-size   22_06_10_Userbutton.elf 
    text	   data	    bss	    dec	    hex	filename
   38020	    484	   2300	  40804	   9f64	22_06_10_Userbutton.elf
 Finished building: default.size.stdout
  
 
-19:56:59 Build Finished. 0 errors, 0 warnings. (took 750ms)
+22:16:19 Build Finished. 0 errors, 0 warnings. (took 538ms)
 
