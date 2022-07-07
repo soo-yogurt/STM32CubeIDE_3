@@ -31950,3 +31950,8 @@
 2022-07-05 23:19:14,418 [INFO] NvicIntPanel:96 - NVIC parent = com.st.microxplorer.plugins.ip.nvic.MultiNvicIntPanel[,0,0,0x0,invalid,layout=javax.swing.BoxLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=9,maximumSize=,minimumSize=,preferredSize=]
 2022-07-05 23:20:28,080 [INFO] NvicIntPanel:96 - NVIC parent = com.st.microxplorer.plugins.ip.nvic.MultiNvicIntPanel[,0,0,0x0,invalid,layout=javax.swing.BoxLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=9,maximumSize=,minimumSize=,preferredSize=]
 2022-07-05 23:28:51,664 [INFO] Gpio:254 - dependency for GPIO [ADC1, I2C1, RCC, SYS, TIM2, USART2, USART3]
+2022-07-07 19:01:03,702 [INFO] Activator:177 - 
+
+
+2022-07-07 19:01:03,702 [INFO] Activator:178 - !SESSION log4j initialized
+2022-07-07 19:01:09,301 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com

@@ -1,5 +1,5 @@
-22:15:57 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
-make -j4 all 
+19:05:49 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+make -j8 all 
 arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o"
 arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o"
 arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o"
@@ -42,15 +42,15 @@ Finished building target: 22_06_10_Userbutton.elf
 arm-none-eabi-size   22_06_10_Userbutton.elf 
 arm-none-eabi-objdump -h -S  22_06_10_Userbutton.elf  > "22_06_10_Userbutton.list"
    text	   data	    bss	    dec	    hex	filename
-  38020	    484	   2300	  40804	   9f64	22_06_10_Userbutton.elf
+  37944	    368	   2304	  40616	   9ea8	22_06_10_Userbutton.elf
 Finished building: default.size.stdout
  
 Finished building: 22_06_10_Userbutton.list
  
-22:16:18 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
-make -j4 all 
+19:05:59 **** Incremental Build of configuration Debug for project 22_06_10_Userbutton ****
+make -j8 all 
 arm-none-eabi-size   22_06_10_Userbutton.elf 
    text	   data	    bss	    dec	    hex	filename
-  38020	    484	   2300	  40804	   9f64	22_06_10_Userbutton.elf
+  37944	    368	   2304	  40616	   9ea8	22_06_10_Userbutton.elf
 Finished building: default.size.stdout
  
