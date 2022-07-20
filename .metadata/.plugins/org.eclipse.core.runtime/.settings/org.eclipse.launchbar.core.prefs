@@ -1,7 +1,7 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:workspace_flashmemory Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:22_06_10_Userbutton Debug
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_19_I2C_workspace Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_20_flash_workspace,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Activity_TIM Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:BULETOOTH Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:workspace_flashmemory Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2020_06_10_ADCandTimer_Interrupt Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2020_06_14_LCD_workspace1 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2020_06_14_i2c_workspace2 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_12_ic2 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_15_Time_workspace1 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:22_06_10_Userbutton Debug
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2020_06_10_ADCandTimer_Interrupt\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2020_06_10_ADCandTimer_Interrupt\ Debug/activeLaunchTarget=null\:---
@@ -16,6 +16,7 @@ org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_14_workspace_ADC\ Debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_15_Time_workspace1\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_15_Time_workspace1\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_19_I2C_workspace\ Debug/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:2022_06_19_I2C_workspace\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:22_06_10_Userbutton\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:22_06_10_Userbutton\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:clock_workspace\ Debug/activeLaunchMode=run
