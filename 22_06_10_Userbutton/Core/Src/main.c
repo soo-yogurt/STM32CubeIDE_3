@@ -51,10 +51,10 @@ typedef struct FLAHTIME {
 	uint8_t hour;
 	uint8_t minutes;
 	uint8_t seconds;
-	uint8_t alramFormat;
-	uint8_t alramHour;
-	uint8_t alramMinutes;
-	uint8_t alramSeconds;
+	uint8_t alarmFormat;
+	uint8_t alarmHour;
+	uint8_t alarmMinutes;
+	uint8_t alarmSeconds;
 
 } FT;
 
@@ -85,14 +85,15 @@ FT flashTime2;
 #define BACKLIGHT (1 << 3)
 #define LCD_DELAY_MS 5
 
+
 // flash memory
 #define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_12   /* Start @ of user Flash area */
 /* End @ of user Flash area : sector start address + sector size -1 */
 #define FLASH_USER_END_ADDR     ADDR_FLASH_SECTOR_23  +  GetSectorSize(ADDR_FLASH_SECTOR_23) - 1
-#define DATA_32                 ((uint32_t)0x00001011) // 플래시 메모리 매직 넘버, 초기 값으로 설정 하고 싶을때 해당 값 바꾸자
+#define DATA_32                 ((uint32_t)0x00001011) // ?��?��?�� 메모�? 매직 ?���?, 초기 값으�? ?��?�� ?���? ?��?��?�� ?��?�� �? 바꾸?��
 
-
-// 숫자가 클수록 소리가 작아진다.
+#define NOISE 55
+// ?��?���? ?��?���? ?��리�? ?��?��진다.
 #define VOLUME 300
 /* USER CODE END PD */
 
@@ -104,10 +105,19 @@ FT flashTime2;
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
+uint8_t rx = 0;
+char rx_buf[20];
+int bufindex = 0;
+uint8_t receive_data_type = 0;
+char *p;
+
 ClickInfoDef click[3];
 int current_time = 0;
 int time_interval = 0;
 int last_time = 0;
+
+// 0?���? ?��?��?�� ON, 1?���? OFF
 int alarmMode = 1;
 uint8_t longClick = 0;
 int ADC_value;
@@ -122,6 +132,8 @@ char temp[25]; // set Time
 char ampm[2][3] = { "AM", "PM" };
 char alarmSet[2][4] = { "ON ", "OFF" };
 
+// ?��?��?�� 켜졌?���? Display1_line1?�� A?���? ?��?��?��?��.
+char alarmOnOff[2][2] = { "A", " " };
 
 
 int ADC_flag = 0;
@@ -188,7 +200,12 @@ void SystemClock_Config(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
+
+void Ready_Receive_IT();
+void Set_receive_datas();
+
 //LCD
 void I2C_Scan();
 void loop();
@@ -198,29 +215,42 @@ void LCD_Init(uint8_t lcd_addr);
 void LCD_SendCommand(uint8_t lcd_addr, uint8_t cmd);
 void LCD_SendData(uint8_t lcd_addr, uint8_t data);
 HAL_StatusTypeDef LCD_SendInternal(uint8_t lcd_addr, uint8_t data, uint8_t flags);
+
 void AdcSwitch(uint8_t *adc_point, int *location);
 void bufferState();
 void SetTimeUp(const int *location);
+
+
 void SaveAlarm();
-void SaveSeting();
-void underworld();
-void Bicyclemelody();
-void SetUpflash();
+void SetClock();
+
 
 void PlayToAlarm();
-void Savemelody();
-void MF_Init_fash();
-void Display3_ADC_switch_select_melody_number(uint8_t *num);
+void Bicyclemelody();
+void underworld();
+void SaveMelody();
+
+
+void MF_Init_flash();
+void SetUpflash();
+
+void Display0_line1();
+void Dispaly0_line2();
+void Display1_line1();
+void Display1_line2();
+void Display2_line1();
+void Display2_line2();
 void Display3_line1();
 void Display3_line2(uint8_t *num);
+void Display3_ADC_switch_select_melody_number(uint8_t *num);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int __io_putchar(int ch) {
+/*int __io_putchar(int ch) {
 	HAL_UART_Transmit(&huart3, (uint8_t*)&ch, 1, 100);
 	return ch;
-}
+}*/
 /* USER CODE END 0 */
 
 /**
@@ -230,11 +260,12 @@ int __io_putchar(int ch) {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	int location = 0;
-	uint8_t adc_point = 0;
+  // 커서?�� ?��치�?? ???��?�� ?��?�� 구간?�� 건너?���? ?��?�� �??��
+  int location = 0;
+  // LCD?��?�� 붙�? ADC 버튼?�� 중복?��?�� ?��?���??�� �? 방�??���? ?��?�� �??��
+  uint8_t adc_point = 0;
   /* USER CODE END 1 */
 
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -262,21 +293,15 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-
   /* MCU Configuration--------------------------------------------------------*/
-
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
   /* USER CODE BEGIN Init */
   /* USER CODE END Init */
-
   /* Configure the system clock */
   SystemClock_Config();
-
   /* USER CODE BEGIN SysInit */
   /* USER CODE END SysInit */
-
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_RTC_Init();
@@ -286,129 +311,99 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_TIM2_Init();
-
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
 
-  MF_Init_fash();
+  /* USER CODE BEGIN Init */
+  MF_Init_flash();
+  // LCD 초기?�� ?��?��
+  init();
+  HAL_TIM_Base_Init(&htim3);
+  HAL_TIM_Base_Start_IT(&htim3);
+  /* USER CODE END Init */
+
+  at.f = flashTime.alarmFormat;
+  at.h = flashTime.alarmHour;
+  at.m = flashTime.alarmMinutes;
+  at.s = flashTime.alarmSeconds;
 
 
-
-	init();
-	HAL_TIM_Base_Init(&htim3);
-	HAL_TIM_Base_Start_IT(&htim3);
-
-
-	at.f = flashTime.alramFormat;
-	at.h = flashTime.alramHour;
-	at.m = flashTime.alramMinutes;
-	at.s = flashTime.alramSeconds;
+  sDate.Year = 22;
+  sDate.Month = 6;
+  sDate.Date = 20;
+  sTime.TimeFormat = 0;
+  sTime.Hours = 12;
 
 
-	sDate.Year = 22;
-	sDate.Month = 6;
-	sDate.Date = 20;
-	sTime.TimeFormat = 0;
-	sTime.Hours = 12;
-
-
-	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-	memset(buf, 0, sizeof(buf));
-
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  memset(buf, 0, sizeof(buf));
+  memset(rx_buf, 0, sizeof(rx_buf));
+  HAL_UART_Receive_IT(&huart3, &rx, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	while (1) {
+  while (1) {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		char alarmOnOff[2][2] = { "A", " " };
-		//clock
-		if (lcd_display_number == 0) {
-			//********************** cursor ****************************************
-			bufferState();
-			//********************* Display ** LINE 1 ******************************
-			sprintf(buf, " %s   LCD Clock  ", alarmOnOff[alarmMode]);
-			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, buf);
-			//********************* Display ** LINE 2 ******************************
-			location = 0;
-			while (lcd_display_number == 0) {
-				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-				HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-				HAL_UART_Transmit(&huart3, (uint8_t*) buf, sizeof(buf), 2000);
-				sprintf(buf, "%s %02d:%02d:%02d     ", ampm[sTime.TimeFormat],
-						sTime.Hours, sTime.Minutes, sTime.Seconds);
-				printf("\r\n");
-				LCD_SendCommand(LCD_ADDR, 0b11000000);
-				LCD_SendString(LCD_ADDR, buf);
-				//**********************************************************************
-				// 알람이 울릴 때 longClick 으로 종료할 수 있따.
-				if (alarmMode == 0) {
-					if (at.f == sTime.TimeFormat) {
-						if (at.h == sTime.Hours && at.m == sTime.Minutes
-								&& at.s == sTime.Seconds) {
-							alarmMode = 1;
-							while (longClick == 0) {
-								PlayToAlarm();
-
-							}
-							longClick = 0;
-							sprintf(buf, " %s   LCD Clock  ",
-									alarmOnOff[alarmMode]);
-							LCD_SendCommand(LCD_ADDR, 0b10000000);
-							LCD_SendString(LCD_ADDR, buf);
-						}
-					}
-				}
-				//**********************************************************************
-			}
-		}
-		//set Time
-		else if (lcd_display_number == 1) {
-			//********************* Display ** LINE 1 ******************************
-			sprintf(buf, " %s   Set Time   ", alarmOnOff[alarmMode]);
-			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, buf);
-			//********************* Display ** LINE 2 ******************************
-			sprintf(buf, "%s %02d:%02d:%02d     ", ampm[sTime.TimeFormat],
-					sTime.Hours, sTime.Minutes, sTime.Seconds);
-			LCD_SendCommand(LCD_ADDR, 0b11000000);
-			LCD_SendString(LCD_ADDR, buf);
-			//********************** cursor ****************************************
-			bufferState();
-			location = 0;
-			//***********************st 초기화 *******************************************
-			st.f = sTime.TimeFormat;
-			st.h = sTime.Hours;
-			st.m = sTime.Minutes;
-			st.s = sTime.Seconds;
-			//**********************************************************************
-			longClick = 0;
-			while (lcd_display_number == 1) {
-				AdcSwitch(&adc_point, &location);
-				SaveSeting();
-			}
-			//**********************************************************************
-		}
-		//alarm
+	  if (lcd_display_number == 0) {
+		  // 커서 ?���? ?��?�� ************** cursor *************************************
+		  bufferState();
+		  location = 0;
+		  //********************* Display ******************************************
+		  while (lcd_display_number == 0) {
+			  Display0_line1();
+			  Dispaly0_line2();
+			  Set_receive_datas();
+		  //************************************************************************
+		  // ?��?��?�� ?���? ?�� longClick ?���? 종료?�� ?�� ?��?��.
+			  if (alarmMode == 0) {
+				  if (at.f == sTime.TimeFormat) {
+					  if (at.h == sTime.Hours && at.m == sTime.Minutes && at.s == sTime.Seconds) {
+						  alarmMode = 1;
+						  while (longClick == 0) {
+							  PlayToAlarm();
+						  }
+						  longClick = 0;
+		    			  Display0_line1();
+					  }
+				  }
+			  }
+		    //**********************************************************************
+		  }
+	  } //set Time
+	  else if (lcd_display_number == 1) {
+		  //********************* Display ******************************************
+		  Display1_line1();
+		  Display1_line2();
+		  //********************** cursor ******************************************
+		  bufferState();
+		  location = 0;
+		  //***********************st 초기?�� *****************************************
+		  st.f = sTime.TimeFormat;
+		  st.h = sTime.Hours;
+		  st.m = sTime.Minutes;
+		  st.s = sTime.Seconds;
+		  //************************************************************************
+		  longClick = 0;
+		  while (lcd_display_number == 1) {
+			  AdcSwitch(&adc_point, &location);
+			  SetClock();
+			  Set_receive_datas();
+		  }
+		 //*************************************************************************
+		} //alarm
 		else if (lcd_display_number == 2) {
-			//********************* Display ** LINE 1 ******************************
-			sprintf(buf, " %s   alarm      ", alarmOnOff[alarmMode]);
-			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, buf);
-			//********************* Display ** LINE 2 ******************************
-			sprintf(buf, "%s %02d:%02d:%02d %s ", ampm[at.f], at.h, at.m, at.s,
-					alarmSet[alarmMode]);
-			LCD_SendCommand(LCD_ADDR, 0b11000000);
-			LCD_SendString(LCD_ADDR, buf);
+			//********************* Display ****************************************
+			Display2_line1();
+			Display2_line2();
 			//********************** cursor ****************************************
 			bufferState();
 			location = 0;
-			//***********************st 초기화 *******************************************
+			//***********************st 초기?�� ***************************************
 			st.f = at.f;
 			st.h = at.h;
 			st.m = at.m;
@@ -420,20 +415,18 @@ int main(void)
 				SaveAlarm();
 			}
 		}
-			//**********************************************************************
-			else if (lcd_display_number == 3) {
-				//********************* Display ** LINE 1 ******************************
-				Display3_line1();
-				//********************* Display ** LINE 2 ******************************
-				while(lcd_display_number == 3){
-					Display3_line2(&melody_number);
-					Savemelody();
-				}
-
+		else if (lcd_display_number == 3) {
+			//********************* Display *****************************************
+			Display3_line1();
+			while(lcd_display_number == 3){
+				Display3_line2(&melody_number);
+				SaveMelody();
+				Set_receive_datas();
 			}
-			else if (lcd_display_number > 3)
-				lcd_display_number = 0;
 		}
+		else if (lcd_display_number > 3)
+			lcd_display_number = 0;
+	}
   /* USER CODE END 3 */
 }
 
@@ -506,7 +499,7 @@ static void MX_NVIC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void MF_Init_fash()
+void MF_Init_flash()
 {
 	HAL_FLASH_Unlock();
 
@@ -519,17 +512,17 @@ void MF_Init_fash()
 		EraseInitStruct.Sector = FirstSector;
 		EraseInitStruct.NbSectors = NbOfSectors;
 
-		flashTime.alramFormat = *((uint32_t*) 0x08100014);
-		flashTime.alramHour = *((uint32_t*) 0x08100018);
-		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
-		flashTime.alramSeconds = *((uint32_t*) 0x08100020);
+		flashTime.alarmFormat = *((uint32_t*) 0x08100014);
+		flashTime.alarmHour = *((uint32_t*) 0x08100018);
+		flashTime.alarmMinutes = *((uint32_t*) 0x0810001C);
+		flashTime.alarmSeconds = *((uint32_t*) 0x08100020);
 		alarmMode = *((uint32_t*) 0x08100024);
 		melody_number = *((uint32_t*) 0x08100028);
 
 	} else {
 
 		FirstSector = GetSector(FLASH_USER_START_ADDR);
-		// flash 메모리의 key 값은 다른 섹터에 저장되어있다. 따라서 사용 할 섹터 수도 2개
+		// flash 메모리의 key 값�? ?���? ?��?��?�� ???��?��?��?��?��. ?��?��?�� ?��?�� ?�� ?��?�� ?��?�� 2�?
 		NbOfSectors = 2;
 		EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
 		EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
@@ -540,7 +533,7 @@ void MF_Init_fash()
 
 		}
 
-		// key 값이 저장되었기 때문에 사용할 섹터도 1개로 바꾼다.
+		// key 값이 ???��?��?���? ?��문에 ?��?��?�� ?��?��?�� 1개로 바꾼?��.
 		NbOfSectors = 1;
 		EraseInitStruct.NbSectors = NbOfSectors;
 
@@ -558,10 +551,10 @@ void MF_Init_fash()
 
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100028), 1);
 
-		flashTime.alramFormat = *((uint32_t*) 0x08100014);
-		flashTime.alramHour = *((uint32_t*) 0x08100018);
-		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
-		flashTime.alramSeconds = *((uint32_t*) 0x08100020);
+		flashTime.alarmFormat = *((uint32_t*) 0x08100014);
+		flashTime.alarmHour = *((uint32_t*) 0x08100018);
+		flashTime.alarmMinutes = *((uint32_t*) 0x0810001C);
+		flashTime.alarmSeconds = *((uint32_t*) 0x08100020);
 		alarmMode = *((uint32_t*) 0x08100024);
 		melody_number = *((uint32_t*) 0x08100028);
 	}
@@ -571,16 +564,49 @@ void MF_Init_fash()
 
 
 
-void Display3_ADC_switch_select_melody_number(uint8_t *num)
+void Display0_line1()
 {
-	if(ADC_flag == 3)
-	{
-		*num = 1;
-	}
-	else if(ADC_flag == 4)
-	{
-		*num = 2;
-	}
+	sprintf(buf, " %s   LCD Clock  ", alarmOnOff[alarmMode]);
+	LCD_SendCommand(LCD_ADDR, 0b10000000);
+	LCD_SendString(LCD_ADDR, buf);
+}
+void Dispaly0_line2()
+{
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	//HAL_UART_Transmit(&huart3, (uint8_t*) buf, sizeof(buf), 2000);
+	sprintf(buf, "%s %02d:%02d:%02d     ", ampm[sTime.TimeFormat],
+			sTime.Hours, sTime.Minutes, sTime.Seconds);
+	printf("\r\n");
+	LCD_SendCommand(LCD_ADDR, 0b11000000);
+	LCD_SendString(LCD_ADDR, buf);
+}
+
+void Display1_line1()
+{
+	sprintf(buf, " %s   Set Time   ", alarmOnOff[alarmMode]);
+	LCD_SendCommand(LCD_ADDR, 0b10000000);
+	LCD_SendString(LCD_ADDR, buf);
+}
+void Display1_line2()
+{
+	sprintf(buf, "%s %02d:%02d:%02d     ", ampm[sTime.TimeFormat],
+			sTime.Hours, sTime.Minutes, sTime.Seconds);
+	LCD_SendCommand(LCD_ADDR, 0b11000000);
+	LCD_SendString(LCD_ADDR, buf);
+}
+void Display2_line1()
+{
+	sprintf(buf, " %s   alarm      ", alarmOnOff[alarmMode]);
+	LCD_SendCommand(LCD_ADDR, 0b10000000);
+	LCD_SendString(LCD_ADDR, buf);
+}
+void Display2_line2()
+{
+	sprintf(buf, "%s %02d:%02d:%02d %s ", ampm[at.f], at.h, at.m, at.s,
+			alarmSet[alarmMode]);
+	LCD_SendCommand(LCD_ADDR, 0b11000000);
+	LCD_SendString(LCD_ADDR, buf);
 }
 
 void Display3_line1()
@@ -606,12 +632,135 @@ void Display3_line2(uint8_t *num) // melodyNumber
 	LCD_SendString(LCD_ADDR, buf);
 }
 
+void Display3_ADC_switch_select_melody_number(uint8_t *num)
+{
+	if(ADC_flag == 3)
+	{
+		*num = 1;
+	}
+	else if(ADC_flag == 4)
+	{
+		*num = 2;
+	}
+}
+
+
 void bufferState() {
 	if (lcd_display_number == 2 || lcd_display_number == 1) {
 		LCD_SendCommand(LCD_ADDR, 0b11000000);
 		LCD_SendCommand(LCD_ADDR, 0b00001111);
 	} else
 		LCD_SendCommand(LCD_ADDR, 0b00001110);
+}
+// SET+T+A+00+00+00\n
+// SET+A+P+00+00+00\n
+// SET+M+0\n
+
+void Set_receive_datas() {
+	if (receive_data_type != 0) {
+		if (receive_data_type == 1) {
+			if (*(p + 6) == 'A') {
+				int format = 0;
+				sTime.TimeFormat = format;
+			} else if (*(p + 6) == 'P') {
+				int format = 1;
+				sTime.TimeFormat = format;
+			}
+			int hours_1 = *(p + 8) - '0';
+			int hours_2 = *(p + 9) - '0';
+			sTime.Hours = (hours_1 * 10) + hours_2;
+
+			int minutes_1 = *(p + 11) - '0';
+			int minutes_2 = *(p + 12) - '0';
+			sTime.Minutes = (minutes_1 * 10) + minutes_2;
+
+			int seconds_1 = *(p + 14) - '0';
+			int seconds_2 = *(p + 15) - '0';
+			sTime.Seconds = (seconds_1 * 10) + seconds_2;
+
+			HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+			HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+		} else if (receive_data_type == 2) {
+			if (*(p + 6) == 'A') {
+				int format = 0;
+				at.f = format;
+			} else if (*(p + 6) == 'P') {
+				int format = 1;
+				at.f = format;
+			}
+			int hours_1 = *(p +8) - '0';
+			int hours_2 = *(p +9) - '0';
+			at.h = (hours_1 * 10) + hours_2;
+
+			int minutes_1 = *(p + 11) - '0';
+			int minutes_2 = *(p + 12) - '0';
+			at.m = (minutes_1 * 10) + minutes_2;
+
+			int seconds_1 = *(p + 14) - '0';
+			int seconds_2 = *(p + 15) - '0';
+			at.s = (seconds_1 * 10) + seconds_2;
+
+			SetUpflash();
+
+			alarmMode = 0;
+
+		} else if (receive_data_type == 3) {
+			int melody = *(p + 6) - '0';
+			if (melody == 1 || melody == 2){
+				melody_number = melody;
+				SetUpflash();
+			}
+		}
+		Ready_Receive_IT();
+	}
+}
+
+void Ready_Receive_IT()
+{
+	receive_data_type = 0;
+	memset(rx_buf, 0, sizeof(rx_buf));
+	bufindex = 0;
+	HAL_UART_Receive_IT(&huart3, &rx, 1);
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	if (huart->Instance == USART3) {
+		// SET+T+A+00+00+00\n
+		// SET+A+P+00+00+00\n
+		// SET+M+0\n
+		if(rx == '\n')
+		{
+			p = strstr((char*)rx_buf, "SET");
+			if(p != 0)
+			{
+				if (*(p + 4) == 'T')
+				{
+					receive_data_type = 1;
+				}
+				else if(*(p + 4) == 'A')
+				{
+					receive_data_type = 2;
+				}
+				else if(*(p + 4) == 'M')
+				{
+					receive_data_type = 3;
+				}
+				else
+				{
+					Ready_Receive_IT();
+				}
+			}
+			else
+				Ready_Receive_IT();
+		}
+		else if (bufindex < 19)
+		{
+			rx_buf[bufindex++] = rx;
+			HAL_UART_Receive_IT(&huart3, &rx, 1);
+		}
+
+	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
@@ -624,7 +773,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 		pin = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
 
-		if (time_interval <= 4) {
+		if (time_interval <= NOISE) {
 			printf("Noise %d, %d\r\n", pin, time_interval);
 		} else {
 
@@ -655,19 +804,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		HAL_ADC_Stop(&hadc1);
 		ADC_flag = 0;
 		//***************** UP ***********************************************
-		if ((ADC_value <= 15) ) {
+		if ((ADC_value <= UP_KEY_MAX) ) {
 			ADC_flag = 1;
 		}
 		//***************** DOWN ***********************************************
-		else if ((ADC_value >= 830 && ADC_value <= 870) ) {
+		else if ((ADC_value >= DOWN_KEY_MIN && ADC_value <= DOWN_KEY_MAX) ) {
 			ADC_flag = 2;
 		}
 		//****************** LEFT **********************************************
-		else if ((ADC_value >= 1910 && ADC_value <= 1960)) {
+		else if ((ADC_value >= LEFT_KEY_MIN && ADC_value <= LEFT_KEY_MAX)) {
 			ADC_flag = 3;
 		}
 		//***************** RIGHT **********************************************
-		else if ((ADC_value >= 2920 && ADC_value <= 3010)) {
+		else if ((ADC_value >= RIGHT_KEY_MIN && ADC_value <= RIGHT_KEY_MAX)) {
 			ADC_flag = 4;
 		}
 	}
@@ -762,10 +911,9 @@ void SaveAlarm() {
 		lcd_display_number = 0;
 		SetUpflash();
 	}
-
 }
 
-void Savemelody()
+void SaveMelody()
 {
 	if (longClick == 1) {
 		longClick = 0;
@@ -774,7 +922,7 @@ void Savemelody()
 	}
 }
 
-void SaveSeting() {
+void SetClock() {
 
 	/***************** Save 기능 **************************/
 	if (longClick == 1) {
@@ -839,13 +987,11 @@ void SetTimeDown(const int *location) {
 				alarmSet[alarmMode]);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, temp);
-
-	/***************** SetTime 후 커서 되돌리기 **************************/
+	/***************** SetTime ?�� 커서 ?��?��리기 **************************/
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	for (int j = 0; j < *location; j++) {
 		LCD_SendCommand(LCD_ADDR, 0b00010100);
 	}
-
 }
 
 void SetTimeUp(const int *location) {
@@ -903,7 +1049,7 @@ void SetTimeUp(const int *location) {
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	LCD_SendString(LCD_ADDR, temp);
 
-	/***************** SetTime 후 커서 되돌리기 **************************/
+	/***************** SetTime ?�� 커서 ?��?��리기 **************************/
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
 	for (int j = 0; j < *location; j++) {
 		LCD_SendCommand(LCD_ADDR, 0b00010100);
@@ -1143,10 +1289,10 @@ void PlayToAlarm(){
 }
 void SetUpflash() {
 
-	flashTime.alramFormat = at.f;
-	flashTime.alramHour = at.h;
-	flashTime.alramMinutes = at.m;
-	flashTime.alramSeconds = at.s;
+	flashTime.alarmFormat = at.f;
+	flashTime.alarmHour = at.h;
+	flashTime.alarmMinutes = at.m;
+	flashTime.alarmSeconds = at.s;
 
 	HAL_FLASH_Unlock();
 
@@ -1155,16 +1301,16 @@ void SetUpflash() {
 	}
 
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100014),
-			flashTime.alramFormat);
+			flashTime.alarmFormat);
 
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018),
-			flashTime.alramHour);
+			flashTime.alarmHour);
 
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C),
-			flashTime.alramMinutes);
+			flashTime.alarmMinutes);
 
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100020),
-			flashTime.alramSeconds);
+			flashTime.alarmSeconds);
 
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100024),
 			alarmMode );

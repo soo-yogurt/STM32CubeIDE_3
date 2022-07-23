@@ -109,11 +109,11 @@ void Error_Handler(void);
 #define B3 2024
 #define GS4 1204
 
-#define C 956 // ë„
+#define C 956 // ?„
 #define D 852
 #define E 758
 #define F 716
-#define G 638 // ì†”
+#define G 638 // ?†”
 #define A 568
 #define B 506
 #define C_ 902 // C#

@@ -60,8 +60,8 @@ all: main-build
 main-build: 22_06_10_Userbutton.elf secondary-outputs
 
 # Tool invocations
-22_06_10_Userbutton.elf 22_06_10_Userbutton.map: $(OBJS) $(USER_OBJS) C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "22_06_10_Userbutton.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\workspace_stm32\STM32CubeIDE_3\22_06_10_Userbutton\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="22_06_10_Userbutton.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+22_06_10_Userbutton.elf 22_06_10_Userbutton.map: $(OBJS) $(USER_OBJS) C:\STM32CubeIDE\22_06_10_Userbutton\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "22_06_10_Userbutton.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\STM32CubeIDE\22_06_10_Userbutton\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="22_06_10_Userbutton.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
