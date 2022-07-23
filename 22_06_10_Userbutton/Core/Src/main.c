@@ -89,7 +89,7 @@ FT flashTime2;
 #define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_12   /* Start @ of user Flash area */
 /* End @ of user Flash area : sector start address + sector size -1 */
 #define FLASH_USER_END_ADDR     ADDR_FLASH_SECTOR_23  +  GetSectorSize(ADDR_FLASH_SECTOR_23) - 1
-#define DATA_32                 ((uint32_t)0x00001111) // 플래시 메모리 매직 넘버, 초기 값으로 설정 하고 싶을때 해당 값 바꾸자
+#define DATA_32                 ((uint32_t)0x00001011) // 플래시 메모리 매직 넘버, 초기 값으로 설정 하고 싶을때 해당 값 바꾸자
 
 
 // 숫자가 클수록 소리가 작아진다.
@@ -112,19 +112,19 @@ int alarmMode = 1;
 uint8_t longClick = 0;
 int ADC_value;
 uint8_t rx;
-uint8_t flag = 0;
+uint8_t lcd_display_number = 0;
 uint8_t mode = 1;
 RTC_TimeTypeDef sTime = { 0 };
 RTC_DateTypeDef sDate = { 0 };
 char buf[25]; // printf
 char temp[25]; // set Time
-char buf2[25]; //  set Alarm
+
 char ampm[2][3] = { "AM", "PM" };
 char alarmSet[2][4] = { "ON ", "OFF" };
 
 
 
-int newflag = 0;
+int ADC_flag = 0;
 
 // ---------------------------------------------------------------------------------
 SETTIME st;
@@ -152,6 +152,9 @@ uint16_t interval_4[] = { 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125,
 		125, 375, 625 };
 uint16_t mute_4[] = { 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125,
 		125, 125, 0 };
+
+uint8_t melody_number;
+
 
 uint8_t bell_length = sizeof(bicycle) / sizeof(uint16_t);
 uint8_t bell_length_2 = sizeof(bicycle_2) / sizeof(uint16_t);
@@ -201,8 +204,15 @@ void SetTimeUp(const int *location);
 void SaveAlarm();
 void SaveSeting();
 void underworld();
-void BicycleSong();
+void Bicyclemelody();
 void SetUpflash();
+
+void PlayToAlarm();
+void Savemelody();
+void MF_Init_fash();
+void Display3_ADC_switch_select_melody_number(uint8_t *num);
+void Display3_line1();
+void Display3_line2(uint8_t *num);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -281,63 +291,7 @@ int main(void)
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_FLASH_Unlock();
-
-	if (*((uint32_t*) 0x08104000) == DATA_32) {
-
-		FirstSector = GetSector(FLASH_USER_START_ADDR);
-		NbOfSectors = 1;
-		EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
-		EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
-		EraseInitStruct.Sector = FirstSector;
-		EraseInitStruct.NbSectors = NbOfSectors;
-
-
-		flashTime.alramFormat = *((uint32_t*) 0x08100014);
-		flashTime.alramHour = *((uint32_t*) 0x08100018);
-		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
-		flashTime.alramSeconds = *((uint32_t*) 0x08100020);
-		alarmMode = *((uint32_t*) 0x08100024);
-
-	} else {
-
-
-		FirstSector = GetSector(FLASH_USER_START_ADDR);
-		NbOfSectors = 2;
-		EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
-		EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
-		EraseInitStruct.Sector = FirstSector;
-		EraseInitStruct.NbSectors = NbOfSectors;
-
-		if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK) {
-
-		}
-
-		NbOfSectors = 1;
-		EraseInitStruct.NbSectors = NbOfSectors;
-
-		Address = ADDR_FLASH_SECTOR_12;
-
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08104000), ((uint32_t) DATA_32));
-
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100014), 0);
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018), 12);
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C), 0);
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100020), 0);
-
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100024), 1 ); // alarmMode off
-
-		flashTime.alramFormat = *((uint32_t*) 0x08100014);
-		flashTime.alramHour = *((uint32_t*) 0x08100018);
-		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
-		flashTime.alramSeconds = *((uint32_t*) 0x08100020);
-		alarmMode = *((uint32_t*) 0x08100024);
-
-
-
-	}
-
-	HAL_FLASH_Lock();
+  MF_Init_fash();
 
 
 
@@ -372,18 +326,17 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		char alarmOnOff[2][2] = { "A", " " };
-		char flag1buf[25];
 		//clock
-		if (flag == 0) {
+		if (lcd_display_number == 0) {
 			//********************** cursor ****************************************
 			bufferState();
 			//********************* Display ** LINE 1 ******************************
-			sprintf(flag1buf, " %s   LCD Clock  ", alarmOnOff[alarmMode]);
+			sprintf(buf, " %s   LCD Clock  ", alarmOnOff[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, flag1buf);
+			LCD_SendString(LCD_ADDR, buf);
 			//********************* Display ** LINE 2 ******************************
 			location = 0;
-			while (flag == 0) {
+			while (lcd_display_number == 0) {
 				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 				HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 				HAL_UART_Transmit(&huart3, (uint8_t*) buf, sizeof(buf), 2000);
@@ -400,14 +353,14 @@ int main(void)
 								&& at.s == sTime.Seconds) {
 							alarmMode = 1;
 							while (longClick == 0) {
-								//BicycleSong();
-								underworld();
+								PlayToAlarm();
+
 							}
 							longClick = 0;
-							sprintf(flag1buf, " %s   LCD Clock  ",
+							sprintf(buf, " %s   LCD Clock  ",
 									alarmOnOff[alarmMode]);
 							LCD_SendCommand(LCD_ADDR, 0b10000000);
-							LCD_SendString(LCD_ADDR, flag1buf);
+							LCD_SendString(LCD_ADDR, buf);
 						}
 					}
 				}
@@ -415,11 +368,11 @@ int main(void)
 			}
 		}
 		//set Time
-		else if (flag == 1) {
+		else if (lcd_display_number == 1) {
 			//********************* Display ** LINE 1 ******************************
-			sprintf(flag1buf, " %s   Set Time   ", alarmOnOff[alarmMode]);
+			sprintf(buf, " %s   Set Time   ", alarmOnOff[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, flag1buf);
+			LCD_SendString(LCD_ADDR, buf);
 			//********************* Display ** LINE 2 ******************************
 			sprintf(buf, "%s %02d:%02d:%02d     ", ampm[sTime.TimeFormat],
 					sTime.Hours, sTime.Minutes, sTime.Seconds);
@@ -435,23 +388,23 @@ int main(void)
 			st.s = sTime.Seconds;
 			//**********************************************************************
 			longClick = 0;
-			while (flag == 1) {
+			while (lcd_display_number == 1) {
 				AdcSwitch(&adc_point, &location);
 				SaveSeting();
 			}
 			//**********************************************************************
 		}
 		//alarm
-		else if (flag == 2) {
+		else if (lcd_display_number == 2) {
 			//********************* Display ** LINE 1 ******************************
-			sprintf(flag1buf, " %s   alarm      ", alarmOnOff[alarmMode]);
+			sprintf(buf, " %s   alarm      ", alarmOnOff[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b10000000);
-			LCD_SendString(LCD_ADDR, flag1buf);
+			LCD_SendString(LCD_ADDR, buf);
 			//********************* Display ** LINE 2 ******************************
-			sprintf(buf2, "%s %02d:%02d:%02d %s ", ampm[at.f], at.h, at.m, at.s,
+			sprintf(buf, "%s %02d:%02d:%02d %s ", ampm[at.f], at.h, at.m, at.s,
 					alarmSet[alarmMode]);
 			LCD_SendCommand(LCD_ADDR, 0b11000000);
-			LCD_SendString(LCD_ADDR, buf2);
+			LCD_SendString(LCD_ADDR, buf);
 			//********************** cursor ****************************************
 			bufferState();
 			location = 0;
@@ -462,14 +415,25 @@ int main(void)
 			st.s = at.s;
 			//**********************************************************************
 			longClick = 0;
-			while (flag == 2) {
+			while (lcd_display_number == 2) {
 				AdcSwitch(&adc_point, &location);
 				SaveAlarm();
 			}
+		}
 			//**********************************************************************
-		} else if (flag > 2)
-			flag = 0;
-	}
+			else if (lcd_display_number == 3) {
+				//********************* Display ** LINE 1 ******************************
+				Display3_line1();
+				//********************* Display ** LINE 2 ******************************
+				while(lcd_display_number == 3){
+					Display3_line2(&melody_number);
+					Savemelody();
+				}
+
+			}
+			else if (lcd_display_number > 3)
+				lcd_display_number = 0;
+		}
   /* USER CODE END 3 */
 }
 
@@ -542,8 +506,108 @@ static void MX_NVIC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void MF_Init_fash()
+{
+	HAL_FLASH_Unlock();
+
+	if (*((uint32_t*) 0x08104000) == DATA_32) {
+
+		FirstSector = GetSector(FLASH_USER_START_ADDR);
+		NbOfSectors = 1;
+		EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
+		EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+		EraseInitStruct.Sector = FirstSector;
+		EraseInitStruct.NbSectors = NbOfSectors;
+
+		flashTime.alramFormat = *((uint32_t*) 0x08100014);
+		flashTime.alramHour = *((uint32_t*) 0x08100018);
+		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
+		flashTime.alramSeconds = *((uint32_t*) 0x08100020);
+		alarmMode = *((uint32_t*) 0x08100024);
+		melody_number = *((uint32_t*) 0x08100028);
+
+	} else {
+
+		FirstSector = GetSector(FLASH_USER_START_ADDR);
+		// flash 메모리의 key 값은 다른 섹터에 저장되어있다. 따라서 사용 할 섹터 수도 2개
+		NbOfSectors = 2;
+		EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
+		EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+		EraseInitStruct.Sector = FirstSector;
+		EraseInitStruct.NbSectors = NbOfSectors;
+
+		if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK) {
+
+		}
+
+		// key 값이 저장되었기 때문에 사용할 섹터도 1개로 바꾼다.
+		NbOfSectors = 1;
+		EraseInitStruct.NbSectors = NbOfSectors;
+
+		Address = ADDR_FLASH_SECTOR_12;
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08104000),
+				((uint32_t) DATA_32));
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100014), 0);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100018), 12);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x0810001C), 0);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100020), 0);
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100024), 1); // alarmMode off
+
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100028), 1);
+
+		flashTime.alramFormat = *((uint32_t*) 0x08100014);
+		flashTime.alramHour = *((uint32_t*) 0x08100018);
+		flashTime.alramMinutes = *((uint32_t*) 0x0810001C);
+		flashTime.alramSeconds = *((uint32_t*) 0x08100020);
+		alarmMode = *((uint32_t*) 0x08100024);
+		melody_number = *((uint32_t*) 0x08100028);
+	}
+
+	HAL_FLASH_Lock();
+}
+
+
+
+void Display3_ADC_switch_select_melody_number(uint8_t *num)
+{
+	if(ADC_flag == 3)
+	{
+		*num = 1;
+	}
+	else if(ADC_flag == 4)
+	{
+		*num = 2;
+	}
+}
+
+void Display3_line1()
+{
+	memset(buf, 0, sizeof(buf));
+	sprintf(buf, " select melody  ");
+	LCD_SendCommand(LCD_ADDR, 0b10000000);
+	LCD_SendString(LCD_ADDR, buf);
+}
+
+void Display3_line2(uint8_t *num) // melodyNumber
+{
+	memset(buf, 0, sizeof(buf));
+
+	Display3_ADC_switch_select_melody_number(num);
+
+	if(*num == 1)
+		sprintf(buf, "<-> 1.Bicycle    ");
+	else if(*num == 2)
+		sprintf(buf, "<-> 2.underworld ");
+
+	LCD_SendCommand(LCD_ADDR, 0b11000000);
+	LCD_SendString(LCD_ADDR, buf);
+}
+
 void bufferState() {
-	if (flag == 2 || flag == 1) {
+	if (lcd_display_number == 2 || lcd_display_number == 1) {
 		LCD_SendCommand(LCD_ADDR, 0b11000000);
 		LCD_SendCommand(LCD_ADDR, 0b00001111);
 	} else
@@ -578,7 +642,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		} else if (click[0].level == GPIO_PIN_RESET
 				&& click[1].level == GPIO_PIN_SET) {
 			printf("\r\nSelect Key, %d\r\n", click[0].time);
-			flag++;
+			lcd_display_number++;
 		}
 	}
 }
@@ -589,22 +653,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		ADC_value = HAL_ADC_GetValue(&hadc1);
 		printf("ADC_value = %d\r\n", ADC_value);
 		HAL_ADC_Stop(&hadc1);
-		newflag = 0;
+		ADC_flag = 0;
 		//***************** UP ***********************************************
 		if ((ADC_value <= 15) ) {
-			newflag = 1;
+			ADC_flag = 1;
 		}
 		//***************** DOWN ***********************************************
 		else if ((ADC_value >= 830 && ADC_value <= 870) ) {
-			newflag = 2;
+			ADC_flag = 2;
 		}
 		//****************** LEFT **********************************************
 		else if ((ADC_value >= 1910 && ADC_value <= 1960)) {
-			newflag = 3;
+			ADC_flag = 3;
 		}
 		//***************** RIGHT **********************************************
 		else if ((ADC_value >= 2920 && ADC_value <= 3010)) {
-			newflag = 4;
+			ADC_flag = 4;
 		}
 	}
 }
@@ -695,10 +759,19 @@ void SaveAlarm() {
 		at.m = st.m;
 		at.s = st.s;
 		longClick = 0;
-		flag = 0;
+		lcd_display_number = 0;
 		SetUpflash();
 	}
 
+}
+
+void Savemelody()
+{
+	if (longClick == 1) {
+		longClick = 0;
+		lcd_display_number = 0;
+		SetUpflash();
+	}
 }
 
 void SaveSeting() {
@@ -714,7 +787,7 @@ void SaveSeting() {
 		HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
 		longClick = 0;
-		flag = 0;
+		lcd_display_number = 0;
 	}
 }
 void SetTimeDown(const int *location) {
@@ -748,7 +821,7 @@ void SetTimeDown(const int *location) {
 		if (st.s % 10 == 0) st.s += 9;
 		else st.s--;
 	}
-	else if (*location == 12 && flag == 2)
+	else if (*location == 12 && lcd_display_number == 2)
 		alarmMode ^= 1;
 
 
@@ -759,9 +832,9 @@ void SetTimeDown(const int *location) {
 	else if (st.f == 1)
 		strcpy(format, "PM");
 	/****************** Display *************************************/
-	if (flag == 1)
+	if (lcd_display_number == 1)
 		sprintf(temp, "%s %02d:%02d:%02d     ", format, st.h, st.m, st.s);
-	else if (flag == 2)
+	else if (lcd_display_number == 2)
 		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s,
 				alarmSet[alarmMode]);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
@@ -814,7 +887,7 @@ void SetTimeUp(const int *location) {
 			st.s -= 9;
 		else
 			st.s++;
-	} else if (*location == 12 && flag == 2)
+	} else if (*location == 12 && lcd_display_number == 2)
 		alarmMode ^= 1;
 	char format[3];
 	if (st.f == 0)
@@ -822,9 +895,9 @@ void SetTimeUp(const int *location) {
 	else if (st.f == 1)
 		strcpy(format, "PM");
 /****************** Display *************************************/
-	if (flag == 1)
+	if (lcd_display_number == 1)
 		sprintf(temp, "%s %02d:%02d:%02d     ", format, st.h, st.m, st.s);
-	else if (flag == 2)
+	else if (lcd_display_number == 2)
 		sprintf(temp, "%s %02d:%02d:%02d %s  ", format, st.h, st.m, st.s,
 				alarmSet[alarmMode]);
 	LCD_SendCommand(LCD_ADDR, 0b11000000);
@@ -839,19 +912,19 @@ void SetTimeUp(const int *location) {
 
 void AdcSwitch(uint8_t *adc_point, int *location) {
 	//***************** UP *************************************************
-	if (newflag == 1 && *adc_point != 1) {
+	if (ADC_flag == 1 && *adc_point != 1) {
 		*adc_point = 1;
 		printf("ADC_value = %d\r\n", ADC_value);
 		SetTimeUp(location);
 	}
 	//***************** DOWN ***********************************************
-	else if (newflag == 2 && *adc_point != 2) {
+	else if (ADC_flag == 2 && *adc_point != 2) {
 		*adc_point = 2;
 		printf("ADC_value = %d\r\n", ADC_value);
 		SetTimeDown(location);
 	}
 	//****************** LEFT **********************************************
-	else if (newflag == 3  && *adc_point != 3) {
+	else if (ADC_flag == 3  && *adc_point != 3) {
 		printf("ADC_value = %d\r\n", ADC_value);
 		*adc_point = 3;
 		//****************** LEFT **********************************************
@@ -877,7 +950,7 @@ void AdcSwitch(uint8_t *adc_point, int *location) {
 		}
 	}
 	//***************** RIGHT **********************************************
-	else if (newflag == 4  && *adc_point != 4){
+	else if (ADC_flag == 4  && *adc_point != 4){
 		printf("ADC_value = %d\r\n", ADC_value);
 		*adc_point = 4;
 		//***************** RIGHT **********************************************
@@ -908,7 +981,7 @@ void AdcSwitch(uint8_t *adc_point, int *location) {
 
 }
 
-void BicycleSong() {
+void Bicyclemelody() {
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	for (int i = 0; i < bell_length; i++) {
 		if (longClick == 0) {
@@ -1062,11 +1135,13 @@ static uint32_t GetSector(uint32_t Address) {
 	return sector;
 }
 
-
+void PlayToAlarm(){
+	if(melody_number == 1)
+		Bicyclemelody();
+	else if(melody_number == 2)
+		underworld();
+}
 void SetUpflash() {
-
-	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
 	flashTime.alramFormat = at.f;
 	flashTime.alramHour = at.h;
@@ -1093,6 +1168,9 @@ void SetUpflash() {
 
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100024),
 			alarmMode );
+
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ((uint32_t) 0x08100028),
+			melody_number );
 
 	HAL_FLASH_Lock();
 
