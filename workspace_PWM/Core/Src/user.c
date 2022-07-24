@@ -3,8 +3,10 @@
 
 #define FLEX_THUMB 134
 #define SPREAD_THUMB 60
+
 #define FLEX_INDEX 135
 #define SPREAD_INDEX 25
+
 #define FLEX_MIDDLE 25
 #define SPREAD_MIDDLE 115
 
@@ -108,55 +110,99 @@ bool MF_PWM_RPS(int action)
 	return false;
 }
 
-bool MF_PWM_handGesture(int gesture)
-{
-	if (gesture == 0) { // 인사
-		TIM4->CCR3 = FLEX_THUMB;
-		TIM3->CCR3 = FLEX_INDEX;
-		TIM2->CCR3 = SPREAD_MIDDLE; // 방향 반대
-		TIM2->CCR1 = FLEX_RING; // 방향 반대
-		TIM2->CCR4 = FLEX_PINKY;
-		return true;
-	}
+void MF_PWM_handGesture(int gesture) {
 
-	if (gesture == 1) { // 바위
+	if (gesture == 0) // 바위
+	{
 		TIM4->CCR3 = FLEX_THUMB;
 		TIM3->CCR3 = FLEX_INDEX;
 		TIM2->CCR3 = FLEX_MIDDLE; //
 		TIM2->CCR1 = FLEX_RING; // 방향 반대
 		TIM2->CCR4 = FLEX_PINKY;
-		return true;
-
 	}
 
-	if (gesture == 2) { // 가위
+	if (gesture == 1) // 1
+	{
+		TIM4->CCR3 = FLEX_THUMB;
+		TIM3->CCR3 = SPREAD_INDEX;
+		TIM2->CCR3 = FLEX_MIDDLE;
+		TIM2->CCR1 = FLEX_RING;
+		TIM2->CCR4 = FLEX_PINKY;
+	}
+
+	if (gesture == 2) // V
+	{
+
+		TIM4->CCR3 = FLEX_THUMB;
+		TIM3->CCR3 = SPREAD_INDEX;
+		TIM2->CCR3 = SPREAD_MIDDLE;
+		TIM2->CCR1 = FLEX_RING;
+		TIM2->CCR4 = FLEX_PINKY;
+	}
+
+	if (gesture == 3) // 3
+	{
+		TIM4->CCR3 = FLEX_THUMB;
+		TIM3->CCR3 = SPREAD_INDEX;
+		TIM2->CCR3 = SPREAD_MIDDLE;
+		TIM2->CCR1 = SPREAD_RING;
+		TIM2->CCR4 = FLEX_PINKY;
+	}
+
+	if (gesture == 4) // 4
+			{
+		TIM4->CCR3 = FLEX_THUMB;
+		TIM3->CCR3 = SPREAD_INDEX;
+		TIM2->CCR3 = SPREAD_MIDDLE;
+		TIM2->CCR1 = SPREAD_RING;
+		TIM2->CCR4 = SPREAD_PINKY;
+	}
+
+	if (gesture == 5) { // 보
+		TIM4->CCR3 = SPREAD_THUMB;
+		TIM3->CCR3 = SPREAD_INDEX;
+		TIM2->CCR3 = SPREAD_MIDDLE;
+		TIM2->CCR1 = SPREAD_RING;
+		TIM2->CCR4 = SPREAD_PINKY;
+	}
+
+	if (gesture == 6) { // good
+		TIM4->CCR3 = SPREAD_THUMB;
+		TIM3->CCR3 = FLEX_INDEX;
+		TIM2->CCR3 = FLEX_MIDDLE;
+		TIM2->CCR1 = FLEX_RING;
+		TIM2->CCR4 = FLEX_PINKY;
+	}
+	if (gesture == 7) { // 가위
 		TIM4->CCR3 = SPREAD_THUMB;
 		TIM3->CCR3 = SPREAD_INDEX;
 		TIM2->CCR3 = FLEX_MIDDLE;
 		TIM2->CCR1 = FLEX_RING;
 		TIM2->CCR4 = FLEX_PINKY;
-		return true;
-
 	}
 
-	if (gesture == 3) { // 보
+	if (gesture == 8) {
 		TIM4->CCR3 = SPREAD_THUMB;
 		TIM3->CCR3 = SPREAD_INDEX;
-		TIM2->CCR3 = SPREAD_MIDDLE; //
-		TIM2->CCR1 = SPREAD_RING; // 방향 반대
-		TIM2->CCR4 = 48;
-		return true;
-	}
-
-	if(gesture == 4) { // V
-
-		TIM4->CCR3 = FLEX_THUMB;
-		TIM3->CCR3 = SPREAD_INDEX;
-		TIM2->CCR3 = FLEX_MIDDLE; //
-		TIM2->CCR1 = FLEX_RING; // 방향 반대
+		TIM2->CCR3 = SPREAD_MIDDLE;
+		TIM2->CCR1 = FLEX_RING;
 		TIM2->CCR4 = FLEX_PINKY;
-		return true;
 	}
 
-	return false;
+	if (gesture == 9) // 락앤롤
+			{
+		TIM4->CCR3 = SPREAD_THUMB;
+		TIM3->CCR3 = FLEX_INDEX;
+		TIM2->CCR3 = FLEX_MIDDLE;
+		TIM2->CCR1 = FLEX_RING;
+		TIM2->CCR4 = SPREAD_PINKY;
+	}
+
+	if (gesture == 10) { // 인사
+		TIM4->CCR3 = FLEX_THUMB;
+		TIM3->CCR3 = FLEX_INDEX;
+		TIM2->CCR3 = SPREAD_MIDDLE;
+		TIM2->CCR1 = FLEX_RING;
+		TIM2->CCR4 = FLEX_PINKY;
+	}
 }

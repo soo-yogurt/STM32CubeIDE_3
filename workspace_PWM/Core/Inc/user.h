@@ -8,6 +8,6 @@
 bool MF_PWM_Fingers(int select_finger, int action);
 bool MF_PWM_RPS(int action);
 
-bool MF_PWM_handGesture(int gesture);
+void MF_PWM_handGesture(int gesture);
 
 #endif /* __USER_H__ */

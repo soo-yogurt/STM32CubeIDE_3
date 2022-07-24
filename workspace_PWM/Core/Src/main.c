@@ -71,10 +71,8 @@ int __io_putchar(int ch) {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint8_t data;
   int num;
   int action;
-  char tx_buf[20] = { 0, };
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -110,12 +108,6 @@ int main(void)
 
   num = 5;
   action = 0;
-
-
- // HAL_UART_Receive(&huart3, &data, sizeof(data), 10);
-
-
-
 
 
   /* USER CODE END 2 */
