@@ -128,8 +128,9 @@ int main(void)
 	  {
 		  HAL_UART_Transmit(&huart3, (uint8_t*)"false\r\n", strlen("false\r\n"), 10);
 	  }
-	  action ^= 1;
-
+	  // 엄지의 펴는 기능은 pwm 정지시 풀린다.
+	//  action ^= 1;
+	 // MF_PWM_Stop();
 
 /*
 	  if(MF_PWM_RPS(action) == true)

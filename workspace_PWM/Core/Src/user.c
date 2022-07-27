@@ -2,19 +2,19 @@
 #include "stdio.h"
 
 #define FLEX_THUMB 134
-#define SPREAD_THUMB 60
+#define SPREAD_THUMB 85
 
-#define FLEX_INDEX 135
-#define SPREAD_INDEX 25
+#define FLEX_INDEX 130
+#define SPREAD_INDEX 64
 
 #define FLEX_MIDDLE 25
-#define SPREAD_MIDDLE 115
+#define SPREAD_MIDDLE 100
 
 #define FLEX_RING 25
 #define SPREAD_RING 105
 
 #define FLEX_PINKY 120
-#define SPREAD_PINKY 48
+#define SPREAD_PINKY 55
 // CCR 값 이동에 대한 대책 설정하기
 
 // 액션(0) : 손가락을 편다. 액션(1) : 손가락을 구부린다.
@@ -29,8 +29,8 @@ bool MF_PWM_Fingers(int select_finger, int action)
 		else if (action == 0) value = SPREAD_THUMB;
 
 		TIM4->CCR3 = value;
-
 		return true;
+
 	}
 
 	// index == 2
@@ -41,8 +41,8 @@ bool MF_PWM_Fingers(int select_finger, int action)
 		else if (action == 0)	value = SPREAD_INDEX;
 
 		TIM3->CCR3 = value;
-
 		return true;
+
 	}
 
 	if (select_finger == 3) { // 중지
@@ -52,7 +52,6 @@ bool MF_PWM_Fingers(int select_finger, int action)
 		else if (action == 1)	value = FLEX_MIDDLE;
 
 		TIM2->CCR3 = value;
-
 		return true;
 	}
 
@@ -62,17 +61,15 @@ bool MF_PWM_Fingers(int select_finger, int action)
 		else if (action == 1) value = FLEX_RING;
 
 		TIM2->CCR1 = value;
-
 		return true;
 	}
 
 	if (select_finger == 5) { // 소지
 		if (action == 1) value = FLEX_PINKY;
 
-		else if(action == 0) value = 48;
+		else if(action == 0) value = SPREAD_PINKY;
 
 		TIM2->CCR4 = value;
-
 		return true;
 	}
 	return false;
@@ -107,11 +104,11 @@ bool MF_PWM_RPS(int action)
 		return true;
 	}
 
+
 	return false;
 }
 
 void MF_PWM_handGesture(int gesture) {
-
 	if (gesture == 0) // 바위
 	{
 		TIM4->CCR3 = FLEX_THUMB;
@@ -205,4 +202,22 @@ void MF_PWM_handGesture(int gesture) {
 		TIM2->CCR1 = FLEX_RING;
 		TIM2->CCR4 = FLEX_PINKY;
 	}
+}
+
+void MF_PWM_Start()
+{
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+}
+
+void MF_PWM_Stop()
+{
+	HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_4);
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_3);
 }
